@@ -5,13 +5,17 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var log *zap.Logger
+type Logger struct {
+	log *zap.Logger
+}
 
 // Init initializes the logger with given options
-func Init(opts LoggerOptions) {
+func NewLogger(opts LoggerOptions) *Logger {
+	logger := &Logger{}
+
 	if opts.NoOp {
-		log = zap.NewNop() // NoOp logger when logging is disabled
-		return
+		logger.log = zap.NewNop() // NoOp logger when logging is disabled
+		return logger
 	}
 
 	cfg := zap.NewProductionConfig()
@@ -30,7 +34,11 @@ func Init(opts LoggerOptions) {
 
 	// Enable caller and stack trace if configured
 	cfg.EncoderConfig.TimeKey = "timestamp"
-	cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder // Human-readable timestamp
+	if opts.EncodeTime != nil {
+		cfg.EncoderConfig.EncodeTime = opts.EncodeTime
+	} else {
+		cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder // Human-readable timestamp
+	}
 	cfg.EncoderConfig.CallerKey = "caller"
 	cfg.EncoderConfig.StacktraceKey = ""
 
@@ -44,33 +52,34 @@ func Init(opts LoggerOptions) {
 
 	// Build logger
 	var err error
-	log, err = cfg.Build()
+	logger.log, err = cfg.Build()
 	if err != nil {
 		panic("failed to initialize logger: " + err.Error())
 	}
+	return logger
 }
 
 // Info logs an informational message with key-value pairs
-func Info(msg string, keysAndValues ...interface{}) {
-	log.Sugar().Infow(msg, keysAndValues...)
+func (lg Logger) Info(msg string, keysAndValues ...interface{}) {
+	lg.log.Sugar().Infow(msg, keysAndValues...)
 }
 
 // Debug logs a debug message with key-value pairs
-func Debug(msg string, keysAndValues ...interface{}) {
-	log.Sugar().Debugw(msg, keysAndValues...)
+func (lg Logger) Debug(msg string, keysAndValues ...interface{}) {
+	lg.log.Sugar().Debugw(msg, keysAndValues...)
 }
 
 // Error logs an error message with key-value pairs
-func Error(msg string, keysAndValues ...interface{}) {
-	log.Sugar().Errorw(msg, keysAndValues...)
+func (lg Logger) Error(msg string, keysAndValues ...interface{}) {
+	lg.log.Sugar().Errorw(msg, keysAndValues...)
 }
 
 // Warn logs a warning message with key-value pairs
-func Warn(msg string, keysAndValues ...interface{}) {
-	log.Sugar().Warnw(msg, keysAndValues...)
+func (lg Logger) Warn(msg string, keysAndValues ...interface{}) {
+	lg.log.Sugar().Warnw(msg, keysAndValues...)
 }
 
 // Sync flushes any buffered log entries
-func Sync() {
-	_ = log.Sync()
+func (lg Logger) Sync() {
+	_ = lg.log.Sync()
 }
