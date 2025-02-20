@@ -17,7 +17,7 @@ import (
 )
 
 // Config holds application configuration
-type Config struct {
+type Service struct {
 	Logger   *logger.Logger
 	Server   *handlers.Server
 	dbEnv    DBConfig
@@ -38,7 +38,7 @@ type ServerConf struct {
 }
 
 // Init Configs
-func (cnf *Config) Init() (err error) {
+func (cnf *Service) Init() (err error) {
 
 	//Load Env variables
 	if err := cnf.LoadConfig(); err != nil {
@@ -57,7 +57,7 @@ func (cnf *Config) Init() (err error) {
 	return nil
 }
 
-func (cnf *Config) Run() error {
+func (cnf *Service) Run() error {
 
 	// Channel to listen for termination signals
 	stop := make(chan os.Signal, 1)
@@ -65,6 +65,7 @@ func (cnf *Config) Run() error {
 
 	// Run server in a goroutine
 	go func() {
+		cnf.Logger.Info("Starting server port: " + cnf.srvConfg.Port)
 		if err := cnf.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			cnf.Logger.Error("Server error", "error", err)
 			os.Exit(1)
@@ -87,7 +88,7 @@ func (cnf *Config) Run() error {
 	return nil
 }
 
-func (cnf *Config) LoadConfig() error {
+func (cnf *Service) LoadConfig() error {
 	//loads environment variables from .env file
 	if err := godotenv.Load(); err != nil {
 		return errors.New("no .env file found, using system environment variables")

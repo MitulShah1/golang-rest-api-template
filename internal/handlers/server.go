@@ -31,7 +31,8 @@ func NewServer(address string, logger *logger.Logger) (*Server, error) {
 	return &Server{
 		httpList: httpLis,
 		httpSrvr: &http.Server{
-			Addr: address,
+			Addr:    address,
+			Handler: router,
 		},
 		logger: logger,
 	}, nil

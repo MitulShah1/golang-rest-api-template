@@ -7,7 +7,7 @@ import (
 func main() {
 
 	// Initialize the configuration
-	config := config.Config{}
+	config := config.Service{}
 	if err := config.Init(); err != nil {
 		panic(err)
 	}
