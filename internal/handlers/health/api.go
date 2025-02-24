@@ -1,6 +1,7 @@
 package health
 
 import (
+	"golang-rest-api-template/internal/response"
 	"golang-rest-api-template/package/logger"
 	"net/http"
 
@@ -30,6 +31,5 @@ func (api *HealthAPI) RegisterHandlers(router *mux.Router) {
 // when the /health-check endpoint is accessed. This can be used for health
 // checks or liveness probes.
 func (api *HealthAPI) HealthCheckApiHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("OK"))
-	w.WriteHeader(http.StatusOK)
+	response.SendResponseRaw(w, http.StatusOK, []byte("OK"))
 }

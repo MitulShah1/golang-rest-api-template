@@ -3,13 +3,12 @@ package config
 import (
 	"context"
 	"errors"
-	"fmt"
 	"golang-rest-api-template/internal/handlers"
+	"golang-rest-api-template/package/database"
 	"golang-rest-api-template/package/logger"
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 	"time"
 
@@ -22,11 +21,12 @@ type Service struct {
 	Server   *handlers.Server
 	dbEnv    DBConfig
 	srvConfg ServerConf
+	db       *database.Database
 }
 
 type DBConfig struct {
 	Host     string
-	Port     int
+	Port     string
 	User     string
 	Password string
 	Name     string
@@ -48,9 +48,23 @@ func (cnf *Service) Init() (err error) {
 	//initiale logger
 	cnf.Logger = logger.NewLogger(logger.DefaultOptions())
 
+	//initiale database
+	cnf.db, err = database.NewDatabase(database.DBConfig{
+		Host:     cnf.dbEnv.Host,
+		Port:     cnf.dbEnv.Port,
+		User:     cnf.dbEnv.User,
+		Password: cnf.dbEnv.Password,
+		DBName:   cnf.dbEnv.Name,
+	})
+	if err != nil {
+		return err
+	}
+
+	cnf.Logger.Info("Database connection successful")
+
 	//initiale server
 	serverAddr := cnf.srvConfg.Address + ":" + cnf.srvConfg.Port
-	if cnf.Server, err = handlers.NewServer(serverAddr, cnf.Logger); err != nil {
+	if cnf.Server, err = handlers.NewServer(serverAddr, cnf.Logger, cnf.db); err != nil {
 		return err
 	}
 
@@ -94,14 +108,8 @@ func (cnf *Service) LoadConfig() error {
 		return errors.New("no .env file found, using system environment variables")
 	}
 
-	//DB config
-	dbPort, err := strconv.Atoi(getEnv("DB_PORT", "3306"))
-	if err != nil {
-		return fmt.Errorf("invalid DB_PORT: %v", err)
-	}
-
 	cnf.dbEnv = DBConfig{
-		Port:     dbPort,
+		Port:     getEnv("DB_PORT", "3306"),
 		Host:     getEnv("DB_HOST", "localhost"),
 		User:     getEnv("DB_USER", "user"),
 		Password: getEnv("DB_PASSWORD", "password"),

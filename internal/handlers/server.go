@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"golang-rest-api-template/internal/handlers/health"
+	"golang-rest-api-template/package/database"
 	"golang-rest-api-template/package/logger"
 	"net"
 	"net/http"
@@ -16,12 +17,16 @@ type Server struct {
 	logger   *logger.Logger
 }
 
-func NewServer(address string, logger *logger.Logger) (*Server, error) {
+func NewServer(address string, logger *logger.Logger, db *database.Database) (*Server, error) {
 
 	router := mux.NewRouter()
 
+	// Create versioned subrouter (e.g., /v1)
+	apiV1 := router.PathPrefix("/v1").Subrouter()
+
+	// health check API
 	healthAPI := health.NewHealthAPI(logger)
-	healthAPI.RegisterHandlers(router)
+	healthAPI.RegisterHandlers(apiV1)
 
 	httpLis, err := net.Listen(`tcp`, address)
 	if err != nil {
@@ -32,7 +37,7 @@ func NewServer(address string, logger *logger.Logger) (*Server, error) {
 		httpList: httpLis,
 		httpSrvr: &http.Server{
 			Addr:    address,
-			Handler: router,
+			Handler: apiV1,
 		},
 		logger: logger,
 	}, nil

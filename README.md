@@ -37,5 +37,5 @@ golang-microservice-template/
 │── Makefile                    # Build automation
 │── go.mod                      # Go module dependencies
 │── go.sum                      # Dependencies lock file
-│── Jenkinsfile                  # Jenkins CI/CD pipeline
+│── Jenkinsfile                 # Jenkins CI/CD pipeline
 │── README.md                   # Project documentation
