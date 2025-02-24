@@ -5,6 +5,7 @@ import (
 	"golang-rest-api-template/internal/handlers/health"
 	"golang-rest-api-template/package/database"
 	"golang-rest-api-template/package/logger"
+	"golang-rest-api-template/package/middleware"
 	"net"
 	"net/http"
 
@@ -19,14 +20,18 @@ type Server struct {
 
 func NewServer(address string, logger *logger.Logger, db *database.Database) (*Server, error) {
 
+	// Create a new router
 	router := mux.NewRouter()
-
-	// Create versioned subrouter (e.g., /v1)
-	apiV1 := router.PathPrefix("/v1").Subrouter()
 
 	// health check API
 	healthAPI := health.NewHealthAPI(logger)
-	healthAPI.RegisterHandlers(apiV1)
+	healthAPI.RegisterHandlers(router)
+
+	//Create versioned subrouter (e.g., /v1)
+	apiV1 := router.PathPrefix("/v1").Subrouter()
+
+	// Protected routes uses authentication middleware
+	apiV1.Use(middleware.AuthMiddleware)
 
 	httpLis, err := net.Listen(`tcp`, address)
 	if err != nil {
@@ -37,7 +42,7 @@ func NewServer(address string, logger *logger.Logger, db *database.Database) (*S
 		httpList: httpLis,
 		httpSrvr: &http.Server{
 			Addr:    address,
-			Handler: apiV1,
+			Handler: router,
 		},
 		logger: logger,
 	}, nil
