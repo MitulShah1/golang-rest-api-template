@@ -17,6 +17,7 @@ import (
 
 // Config holds application configuration
 type Service struct {
+	Name     string
 	Logger   *logger.Logger
 	Server   *handlers.Server
 	dbEnv    DBConfig
@@ -35,6 +36,12 @@ type DBConfig struct {
 type ServerConf struct {
 	Address string
 	Port    string
+}
+
+func NewService() *Service {
+	return &Service{
+		Name: "go-rest-api-template",
+	}
 }
 
 // Init Configs

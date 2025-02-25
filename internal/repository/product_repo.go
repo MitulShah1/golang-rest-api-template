@@ -1,0 +1,89 @@
+package repository
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"golang-rest-api-template/internal/repository/model"
+
+	"github.com/Masterminds/squirrel"
+)
+
+const PRODUCT_TABLE_NAME = "product"
+
+// ProductRepositoryInterface defines the methods for interacting with the product repository.
+// The methods allow for retrieving product details, creating new products, updating existing products,
+// and deleting products.
+type ProductRepositoryInterface interface {
+	GetProductDetail(ctx context.Context, id int) (product *model.Product, err error)
+	CreateProduct(ctx context.Context, product *model.Product) (err error)
+	UpdateProduct(ctx context.Context, product *model.Product) (err error)
+	DeleteProduct(ctx context.Context, id string) (err error)
+}
+
+func (r *NewRepository) GetProductDetail(ctx context.Context, id int) (product *model.Product, err error) {
+	// Implement the GetProductDetail method
+	builder := squirrel.Select("*").From(PRODUCT_TABLE_NAME).Where("id = ?", id)
+	query, args, err := builder.Limit(1).ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var products model.Product
+	err = r.db.DB.QueryRowxContext(ctx, query, args...).StructScan(&products)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &products, nil
+
+}
+
+// CreateProduct creates a new product in the database using the provided product data.
+// It returns an error if the creation fails.
+func (r *NewRepository) CreateProduct(ctx context.Context, product *model.Product) (err error) {
+	builder := squirrel.Insert(PRODUCT_TABLE_NAME).
+		Columns("name", "description", "price").
+		Values(product.Name, product.Description, product.Price)
+
+	query, args, err := builder.ToSql()
+	if err != nil {
+		return fmt.Errorf("failed to build sql query: %s", err.Error())
+	}
+
+	_, err = r.db.DB.ExecContext(ctx, query, args...)
+
+	return err
+}
+
+func (r *NewRepository) UpdateProduct(ctx context.Context, product *model.Product) (err error) {
+
+	builder := squirrel.Update(PRODUCT_TABLE_NAME).
+		Set("name", product.Name).
+		Set("description", product.Description).
+		Set("price", product.Price).
+		Where("id = ?", product.ID)
+	query, args, err := builder.ToSql()
+	if err != nil {
+		return fmt.Errorf("failed to build sql query: %s", err.Error())
+	}
+
+	_, err = r.db.DB.ExecContext(ctx, query, args...)
+
+	return err
+}
+
+// DeleteProduct deletes a product from the database by the given ID.
+// It returns an error if the deletion fails.
+func (r *NewRepository) DeleteProduct(ctx context.Context, id string) (err error) {
+	builder := squirrel.Delete(PRODUCT_TABLE_NAME).Where("id = ?", id)
+	query, args, err := builder.ToSql()
+	if err != nil {
+		return fmt.Errorf("failed to build sql query: %s", err.Error())
+	}
+	_, err = r.db.DB.ExecContext(ctx, query, args...)
+	return err
+}

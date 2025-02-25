@@ -26,3 +26,6 @@ go.work.sum
 
 #ignore build
 build/
+
+#ignore test coverage
+.coverage

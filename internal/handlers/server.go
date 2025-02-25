@@ -3,6 +3,9 @@ package handlers
 import (
 	"context"
 	"golang-rest-api-template/internal/handlers/health"
+	prodApi "golang-rest-api-template/internal/handlers/product"
+	"golang-rest-api-template/internal/repository"
+	"golang-rest-api-template/internal/service/product"
 	"golang-rest-api-template/package/database"
 	"golang-rest-api-template/package/logger"
 	"golang-rest-api-template/package/middleware"
@@ -30,8 +33,27 @@ func NewServer(address string, logger *logger.Logger, db *database.Database) (*S
 	//Create versioned subrouter (e.g., /v1)
 	apiV1 := router.PathPrefix("/v1").Subrouter()
 
+	// Register all middlewares
+	middlewares := func(handler http.Handler) http.Handler {
+		return middleware.CorsMiddleware(
+			middleware.AuthMiddleware(handler),
+		)
+	}
+
 	// Protected routes uses authentication middleware
-	apiV1.Use(middleware.AuthMiddleware)
+	apiV1.Use(middlewares)
+
+	// initialize repository
+	repo := repository.NewDBRepository(db)
+
+	// initialize product service
+	productService := product.NewProductService(repo, logger)
+
+	// initialize product handler
+	productHandler := prodApi.NewProductAPI(logger, productService)
+
+	// Register product handlers
+	productHandler.RegisterHandlers(apiV1)
 
 	httpLis, err := net.Listen(`tcp`, address)
 	if err != nil {

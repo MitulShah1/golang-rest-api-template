@@ -8,7 +8,7 @@ import (
 func main() {
 
 	// Initialize the configuration
-	config := config.Service{}
+	config := config.NewService()
 	if err := config.Init(); err != nil {
 		logger.NewLogger(logger.DefaultOptions()).Error(err.Error())
 		panic(err)
