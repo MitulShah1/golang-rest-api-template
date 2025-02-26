@@ -19,11 +19,21 @@ func (p *ProductAPI) GetProductDetail(w http.ResponseWriter, r *http.Request) {
 	// Get the product ID from the request URL
 	productID := mux.Vars(r)["id"]
 
+	if productID == "" {
+		p.logger.Error("product id is empty")
+		res.Message = "Product ID is required"
+		resp, _ := json.Marshal(res)
+		response.SendResponseRaw(w, http.StatusBadRequest, resp)
+		return
+	}
+
 	// Convert productID string to int
 	pid, err := strconv.Atoi(productID)
-	if err != nil {
+	if err != nil || pid == 0 {
 		p.logger.Error("invalid product id", err)
-		response.SendResponseRaw(w, http.StatusBadRequest, []byte("Invalid product ID"))
+		res.Message = "Invalid product ID"
+		resp, _ := json.Marshal(res)
+		response.SendResponseRaw(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -37,6 +47,9 @@ func (p *ProductAPI) GetProductDetail(w http.ResponseWriter, r *http.Request) {
 
 	// Send the product details as the response
 	res.IsSuccess = true
+	if product == nil {
+		res.Message = "Product not found"
+	}
 	res.Data = product
 
 	resp, err := json.Marshal(res)

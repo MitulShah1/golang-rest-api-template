@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	GET_PRODUCT_DETAIL_PATH = "/product/{id}"
-	CREATE_PRODUCT_PATH     = "/product"
-	UPDATE_PRODUCT_PATH     = "/product"
-	DELETE_PRODUCT_PATH     = "/product/{id}"
+	PRODUCT_DETAIL_PATH = "/product/{id}"
+	CREATE_PRODUCT_PATH = "/create-product"
+	UPDATE_PRODUCT_PATH = "/update-product/{id}"
+	DELETE_PRODUCT_PATH = "/product/{id}"
 )
 
 type ProductAPI struct {
@@ -28,5 +28,8 @@ func NewProductAPI(logger *logger.Logger, prdService product.ProductServiceInter
 }
 
 func (p *ProductAPI) RegisterHandlers(router *mux.Router) {
-	router.Handle(GET_PRODUCT_DETAIL_PATH, http.HandlerFunc(p.GetProductDetail)).Methods("POST")
+	router.Handle(PRODUCT_DETAIL_PATH, http.HandlerFunc(p.GetProductDetail)).Methods(http.MethodGet)
+	router.Handle(CREATE_PRODUCT_PATH, http.HandlerFunc(p.CreateProductDetail)).Methods(http.MethodPost)
+	router.Handle(UPDATE_PRODUCT_PATH, http.HandlerFunc(p.UpdateProductDetail)).Methods(http.MethodPut)
+	router.Handle(DELETE_PRODUCT_PATH, http.HandlerFunc(p.DeleteProduct)).Methods(http.MethodDelete)
 }
