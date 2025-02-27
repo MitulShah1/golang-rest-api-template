@@ -25,7 +25,7 @@ go.work.sum
 .env
 
 #ignore build
-build/
+build/*
 
 #ignore test coverage
 .coverage

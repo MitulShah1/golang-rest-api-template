@@ -118,7 +118,8 @@ func TestProductAPI_UpdateProductDetail(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code)
 		var response model.StandardResponse
-		json.NewDecoder(w.Body).Decode(&response)
+		err := json.NewDecoder(w.Body).Decode(&response)
+		assert.NoError(t, err)
 		assert.True(t, response.IsSuccess)
 		mockService.AssertExpectations(t)
 	})

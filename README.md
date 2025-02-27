@@ -7,7 +7,6 @@ This is a template for building production-ready REST APIs using Go. It follows 
 ## Project Structure
 ```
 golang-microservice-template/
-golang-microservice-template/
 │── cmd/
 │   ├── server/                # Main entry point for the service
 │   │   ├── main.go

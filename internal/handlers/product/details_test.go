@@ -51,7 +51,8 @@ func TestProductAPI_GetProductDetail(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code)
 		var response model.StandardResponse
-		json.NewDecoder(w.Body).Decode(&response)
+		err := json.NewDecoder(w.Body).Decode(&response)
+		assert.NoError(t, err)
 		assert.True(t, response.IsSuccess)
 		assert.IsType(t, data, response.Data)
 		mockService.AssertExpectations(t)
