@@ -5,7 +5,7 @@ import (
 	"golang-rest-api-template/internal/handlers/health"
 	prodApi "golang-rest-api-template/internal/handlers/product"
 	"golang-rest-api-template/internal/repository"
-	"golang-rest-api-template/internal/service/product"
+	"golang-rest-api-template/internal/services/product"
 	"golang-rest-api-template/package/database"
 	"golang-rest-api-template/package/logger"
 	"golang-rest-api-template/package/middleware"

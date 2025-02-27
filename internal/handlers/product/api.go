@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"golang-rest-api-template/internal/handlers/product/model"
 	"golang-rest-api-template/internal/response"
-	"golang-rest-api-template/internal/service/product"
+	"golang-rest-api-template/internal/services/product"
 	"golang-rest-api-template/package/logger"
 	"net/http"
 

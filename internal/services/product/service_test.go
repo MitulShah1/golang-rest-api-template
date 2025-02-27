@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"golang-rest-api-template/internal/handlers/product/model"
-	"golang-rest-api-template/internal/service/product/mocks"
+	"golang-rest-api-template/internal/services/product/mocks"
 )
 
 var mockService = new(mocks.ProductServiceInterface)
