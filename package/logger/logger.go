@@ -79,6 +79,11 @@ func (lg Logger) Warn(msg string, keysAndValues ...interface{}) {
 	lg.log.Sugar().Warnw(msg, keysAndValues...)
 }
 
+// Fatal logs a fatal message with key-value pairs
+func (lg Logger) Fatal(msg string, keysAndValues ...interface{}) {
+	lg.log.Sugar().Fatalw(msg, keysAndValues...)
+}
+
 // Sync flushes any buffered log entries
 func (lg Logger) Sync() {
 	_ = lg.log.Sync()

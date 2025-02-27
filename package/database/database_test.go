@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	mocks "golang-rest-api-template/package/database/mock"
+	"golang-rest-api-template/package/database/mocks"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"

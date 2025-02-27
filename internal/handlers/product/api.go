@@ -1,6 +1,9 @@
 package product
 
 import (
+	"encoding/json"
+	"golang-rest-api-template/internal/handlers/product/model"
+	"golang-rest-api-template/internal/response"
 	"golang-rest-api-template/internal/service/product"
 	"golang-rest-api-template/package/logger"
 	"net/http"
@@ -32,4 +35,20 @@ func (p *ProductAPI) RegisterHandlers(router *mux.Router) {
 	router.Handle(CREATE_PRODUCT_PATH, http.HandlerFunc(p.CreateProductDetail)).Methods(http.MethodPost)
 	router.Handle(UPDATE_PRODUCT_PATH, http.HandlerFunc(p.UpdateProductDetail)).Methods(http.MethodPut)
 	router.Handle(DELETE_PRODUCT_PATH, http.HandlerFunc(p.DeleteProduct)).Methods(http.MethodDelete)
+}
+
+func (p *ProductAPI) sendErrorResponse(w http.ResponseWriter, message string, status int) {
+	res := model.StandardResponse{Message: message}
+	resp, _ := json.Marshal(res)
+	response.SendResponseRaw(w, status, resp)
+}
+
+func (p *ProductAPI) sendJSONResponse(w http.ResponseWriter, data interface{}, status int) {
+	resp, err := json.Marshal(data)
+	if err != nil {
+		p.logger.Error("error while marshalling response", err)
+		response.SendResponseRaw(w, http.StatusInternalServerError, nil)
+		return
+	}
+	response.SendResponseRaw(w, status, resp)
 }

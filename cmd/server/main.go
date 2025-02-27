@@ -7,17 +7,18 @@ import (
 
 func main() {
 
+	// Initialize the logger
+	log := logger.NewLogger(logger.DefaultOptions())
+
 	// Initialize the configuration
 	config := config.NewService()
 	if err := config.Init(); err != nil {
-		logger.NewLogger(logger.DefaultOptions()).Error(err.Error())
-		panic(err)
+		log.Fatal("error while initize app", "error", err.Error())
 	}
 
 	// Run the application
 	if err := config.Run(); err != nil {
-		logger.NewLogger(logger.DefaultOptions()).Error(err.Error())
-		panic(err)
+		log.Fatal("error while run app", "error", err.Error())
 	}
 
 }

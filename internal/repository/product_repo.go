@@ -59,6 +59,8 @@ func (r *NewRepository) CreateProduct(ctx context.Context, product *model.Produc
 	return err
 }
 
+// UpdateProduct updates an existing product in the database with the provided product data.
+// It returns an error if the update fails.
 func (r *NewRepository) UpdateProduct(ctx context.Context, pid int, product *model.Product) (err error) {
 
 	builder := squirrel.Update(PRODUCT_TABLE_NAME)

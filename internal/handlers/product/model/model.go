@@ -17,7 +17,7 @@ type CreateProductRequest struct {
 type UpdateProductRequest struct {
 	Name        string  `json:"name" validate:"omitempty,required"`
 	Description string  `json:"description" validate:"omitempty,required"`
-	Price       float64 `json:"price" validate:"omitempty,required"`
+	Price       float64 `json:"price" validate:"omitempty,required,min=1"`
 	CategoryID  int     `json:"category_id" validate:"omitempty,required"`
 	Stock       int     `json:"stock" validate:"omitempty,required"`
 }

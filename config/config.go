@@ -44,7 +44,9 @@ func NewService() *Service {
 	}
 }
 
-// Init Configs
+// Init initializes the application configuration, including loading environment variables,
+// initializing the logger, database connection, and server. It returns an error if any
+// of the initialization steps fail.
 func (cnf *Service) Init() (err error) {
 
 	//Load Env variables
@@ -78,6 +80,9 @@ func (cnf *Service) Init() (err error) {
 	return nil
 }
 
+// Run starts the server and listens for termination signals.
+// It runs the server in a goroutine and waits for a termination signal (SIGINT or SIGTERM).
+// When a termination signal is received, it gracefully shuts down the server.
 func (cnf *Service) Run() error {
 
 	// Channel to listen for termination signals
