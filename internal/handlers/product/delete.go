@@ -9,6 +9,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Product godoc
+// @Summary Delete Product example
+// @Schemes
+// @Description Delete Product example
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param id path int true "Product ID"
+// @Success 	 200  {object}  model.StandardResponse
+// @Failure      401  {object}  model.StandardResponse
+// @Failure      400  {object}  model.StandardResponse
+// @Failure      404  {string}  "404 page not found"
+// @Failure      500  {object}  model.StandardResponse
+// @Router /v1/product/{id} [DELETE]
 func (p *ProductAPI) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}
@@ -45,5 +59,6 @@ func (p *ProductAPI) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res.IsSuccess = true
+	res.Message = "Product deleted successfully"
 	p.sendJSONResponse(w, res, http.StatusOK)
 }

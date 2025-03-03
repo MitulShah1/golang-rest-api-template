@@ -8,13 +8,22 @@ REPO_NAME ?= $(shell basename "$$(pwd)")
 COVERAGE_DIR ?= .coverage
 
 # Golang-migrate version
-MIGRATE_VERSION := v4.16.2  # Change to the latest version if needed
+MIGRATE_VERSION ?= v4.16.2  # Change to the latest version if needed
 
 # Golang-lint version
-LINT_VERSION := v1.59.1  # Change to the latest version if needed
+LINT_VERSION ?= v1.59.1  # Change to the latest version if needed
+
+# Swag version
+SWAG_VERSION ?= v1.16.4  # Change to the latest version if needed
 
 # Installation directory for binaries
-INSTALL_DIR := $(HOME)/.local/bin
+INSTALL_DIR ?= $(HOME)/.local/bin
+
+# Go Imports Vesrsion
+IMPORTS_VERSION ?= v0.24.0
+
+# Go Vulncheck Version
+VULN_VERSION ?= v1.1.3
 
 # Formatting for beautiful terminal output
 BLUE=\033[1;34m
@@ -23,12 +32,53 @@ YELLOW=\033[1;33m
 NC=\033[0m  # No Color
 
 # ───────────────────────────────────────────────────────────
-# 🏃 RUN APPLICATION
+# 📝 CHECK & COPY .env IF MISSING
 # ───────────────────────────────────────────────────────────
-run:
-	@echo -e "$(BLUE)🚀 Running the application...$(NC)"
-	@go run cmd/server/main.go
+env:
+	@echo -e "$(YELLOW)🔍 Checking for .env file...$(NC)"
+	@if [ ! -f .env ]; then \
+		echo -e "$(RED)⚠️  .env file not found! Creating from .env.example...$(NC)"; \
+		cp .env.example .env; \
+		echo -e "$(GREEN)✅ .env file created successfully!$(NC)"; \
+	else \
+		echo -e "$(GREEN)✅ .env file exists!$(NC)"; \
+	fi
 
+# ───────────────────────────────────────────────────────────
+# 🎨 FORMAT CODE (gofmt & goimports)
+# ───────────────────────────────────────────────────────────
+format:
+	@echo -e "$(YELLOW)🎨 Formatting Go code...$(NC)"
+	@gofmt -w .
+	@go install golang.org/x/tools/cmd/goimports@$(IMPORTS_VERSION)
+	@goimports -w .
+	@echo -e "$(GREEN)✅ Code formatted successfully!$(NC)"
+
+# ───────────────────────────────────────────────────────────
+# 🔍 RUN GO VET (Code Inspection)
+# ───────────────────────────────────────────────────────────
+vet:
+	@echo -e "$(YELLOW)🔍 Running go vet...$(NC)"
+	@go vet ./...
+	@echo -e "$(GREEN)✅ go vet completed!$(NC)"
+
+# ───────────────────────────────────────────────────────────
+# 🛡️ SECURITY SCAN (govulncheck)
+# ───────────────────────────────────────────────────────────
+security_scan:
+	@echo -e "$(RED)🛡️ Running security vulnerability scan...$(NC)"
+	@go install golang.org/x/vuln/cmd/govulncheck@$(VULN_VERSION)
+	@govulncheck ./...
+	@echo -e "$(GREEN)✅ Security scan completed!$(NC)"
+
+# ───────────────────────────────────────────────────────────
+# 🔄 Install DEPENDENCIES (go mod tidy & upgrade)
+# ───────────────────────────────────────────────────────────
+install_deps:
+	@echo -e "$(YELLOW)🔄 Install Go dependencies....$(NC)"
+	@go mod tidy	
+	@echo -e "$(GREEN)✅ Dependencies updated!$(NC)"
+	
 # ───────────────────────────────────────────────────────────
 # 🔎 LINT CODE (golangci-lint)
 # ───────────────────────────────────────────────────────────
@@ -44,6 +94,13 @@ staticcheck:
 	@echo -e "$(YELLOW)📢 Running staticcheck...$(NC)"
 	@which staticcheck >/dev/null 2>&1 || (echo -e "$(RED)❌ staticcheck not installed! Installing now...$(NC)" && go install honnef.co/go/tools/cmd/staticcheck@latest)
 	@staticcheck ./...
+
+# ───────────────────────────────────────────────────────────
+# 🏃 RUN APPLICATION
+# ───────────────────────────────────────────────────────────
+run:
+	@echo -e "$(BLUE)🚀 Running the application...$(NC)"
+	@go run cmd/server/main.go
 
 # ───────────────────────────────────────────────────────────
 # ✅ RUN TESTS
@@ -71,11 +128,30 @@ $(COVERAGE_DIR):
 	@mkdir -p $(COVERAGE_DIR)
 
 # ───────────────────────────────────────────────────────────
+# 📥 INSTALL SWAG CLI TOOL & PACKAGES
+# ───────────────────────────────────────────────────────────
+install_swag:
+	@echo -e "$(GREEN)📥 Installing Swag CLI and dependencies...$(NC)"
+	@which swag >/dev/null 2>&1 || (echo -e "$(RED)❌ Swag CLI not found! Installing now...$(NC)" && go install github.com/swaggo/swag/cmd/swag@latest)
+	@echo -e "$(YELLOW)🔄 Updating project dependencies for Swag...$(NC)"
+	@go mod tidy
+	@go mod download
+	@echo -e "$(GREEN)✅ Swag installation complete!$(NC)"
+
+# ───────────────────────────────────────────────────────────
+# 📜 GENERATE API DOCUMENTATION
+# ───────────────────────────────────────────────────────────
+generate_docs: install_swag
+	@echo -e "$(YELLOW)📜 Generating API documentation using Swag...$(NC)"
+	@swag init -g ./cmd/server/main.go -o ./docs
+	@echo -e "$(GREEN)✅ API documentation generated successfully!$(NC)"
+
+# ───────────────────────────────────────────────────────────
 # 🏗️ BUILD PROJECT
 # ───────────────────────────────────────────────────────────
-build: clean
+build: 
 	@echo -e "$(BLUE)🏗️ Building the project...$(NC)"
-	@go build -o build/ cmd/server/main.go
+	@go build -o build/server cmd/server/main.go
 
 # ───────────────────────────────────────────────────────────
 # 🧹 CLEAN BUILD & COVERAGE FILES
@@ -83,7 +159,7 @@ build: clean
 clean:
 	@echo -e "$(YELLOW)🧹 Cleaning up build and coverage files...$(NC)"
 	@rm -rf build/*
-	@rm -rf $(COVERAGE_DIR)
+	@rm -rf $(COVERAGE_DIR)	
 
 # ───────────────────────────────────────────────────────────
 # 🔍 CHECK MIGRATION VERSION
@@ -130,5 +206,62 @@ migrate_down:
 		-database "mysql://${DB_USER}:${DB_PASSWORD}@tcp(${DB_HOST}:${DB_PORT})/${DB_NAME}" \
 		-verbose down
 
+# ───────────────────────────────────────────────────────────
+# 🐳 BUILD DOCKER IMAGE
+# ───────────────────────────────────────────────────────────
+docker_build: env
+	@echo -e "$(BLUE)🐳 Building Docker image...$(NC)"
+	@sudo docker-compose build
+	@echo -e "$(GREEN)✅ Docker image built successfully!$(NC)"
+
+# ───────────────────────────────────────────────────────────
+# 🐳 BUILD DOCKER IMAGE
+# ───────────────────────────────────────────────────────────
+docker_build_no_cache: env
+	@echo -e "$(BLUE)🐳 Building Docker image...$(NC)"
+	@sudo docker-compose build --no-cache
+	@echo -e "$(GREEN)✅ Docker image built successfully!$(NC)"
+
+# ───────────────────────────────────────────────────────────
+# 🚀 START DOCKER CONTAINERS
+# ───────────────────────────────────────────────────────────
+docker_up: env docker_build
+	@echo -e "$(BLUE)🚀 Starting Docker containers...$(NC)"
+	@sudo docker-compose up -d
+	@echo -e "$(GREEN)✅ Docker containers started successfully!$(NC)"
+
+# ───────────────────────────────────────────────────────────
+# 📦 STOP & REMOVE DOCKER CONTAINERS
+# ───────────────────────────────────────────────────────────
+docker_down:
+	@echo -e "$(YELLOW)🛑 Stopping and removing Docker containers...$(NC)"
+	@sudo docker-compose down
+	@echo -e "$(GREEN)✅ Docker containers stopped and removed!$(NC)"
+
+# ───────────────────────────────────────────────────────────
+# 📜 VIEW DOCKER LOGS
+# ───────────────────────────────────────────────────────────
+docker_logs:
+	@echo -e "$(YELLOW)📜 Viewing Docker logs...$(NC)"
+	@sudo docker-compose logs -f
+
+# ───────────────────────────────────────────────────────────
+# ✅ CLEAN DOCKER IMAGES & CONTAINERS
+# ───────────────────────────────────────────────────────────
+docker_clean: docker_down
+	@echo -e "$(RED)🗑️ Cleaning up Docker images and containers...$(NC)"
+	@sudo docker system prune -af
+	@echo -e "$(GREEN)✅ Docker cleanup complete!$(NC)"
+
+# ───────────────────────────────────────────────────────────
+# 🚀 CI/CD PRE-CHECK (Runs everything before deployment)
+# ───────────────────────────────────────────────────────────
+ci_check: env format vet lint staticcheck security_scan test
+	@echo -e "$(GREEN)✅ CI/CD pre-check passed successfully!$(NC)"
+
 # Mark these targets as non-file targets
-.PHONY: clean build test install_migration create_migration migrate_up migrate_down version
+.PHONY: env clean build test install_migration create_migration \
+		migrate_up migrate_down version install_swag generate_docs \
+		ci_check format vet lint staticcheck security_scan \
+		install_deps html-coverage docker_build docker_up \
+		docker_down docker_logs docker_clean

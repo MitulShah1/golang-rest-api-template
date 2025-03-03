@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # ───────────────────────────────────────────────────────────
+  # 🌟 DATABASE SERVICE (MySQL)
+  # ───────────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: mysql_container
+    restart: always
+    env_file:
+      - .env  # ✅ Load environment variables from .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app_network
+
+  # ───────────────────────────────────────────────────────────
+  # 🌟 GOLANG APPLICATION
+  # ───────────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      args:
+        SWAG_VERSION: ${SWAG_VERSION}
+        MIGRATE_VERSION: ${MIGRATE_VERSION}
+        LINT_VERSION: ${LINT_VERSION}
+        IMPORTS_VERSION: ${IMPORTS_VERSION}
+        VULN_VERSION: ${VULN_VERSION}        
+    container_name: go_app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env  # ✅ Load environment variables from .env
+    networks:
+      - app_network
+
+# ───────────────────────────────────────────────────────────
+# 🌟 NETWORK & VOLUME CONFIGURATION
+# ───────────────────────────────────────────────────────────
+networks:
+  app_network:
+
+volumes:
+  db_data:

@@ -9,6 +9,20 @@ import (
 	"net/http"
 )
 
+// Product godoc
+// @Summary Create Product example
+// @Schemes
+// @Description Create Product example
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param product body model.CreateProductRequest true "Product"
+// @Success 	 200  {object}  model.ProductDetailResponse
+// @Failure      401  {object}  model.StandardResponse
+// @Failure      400  {object}  model.StandardResponse
+// @Failure      404  {string}  "404 page not found"
+// @Failure      500  {object}  model.StandardResponse
+// @Router /v1/create-product [post]
 func (p *ProductAPI) CreateProductDetail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}

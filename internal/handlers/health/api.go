@@ -23,6 +23,7 @@ func NewHealthAPI(logger *logger.Logger) *HealthAPI {
 // RegisterHandlers registers the health check API handler on the provided router.
 // The health check API handler responds with a 200 OK status when the /health-check
 // endpoint is accessed, which can be used for health checks or liveness probes.
+
 func (api *HealthAPI) RegisterHandlers(router *mux.Router) {
 	router.HandleFunc(HEALTH_CHECK_PATH, api.HealthCheckApiHandler).Methods("GET")
 }
@@ -30,6 +31,16 @@ func (api *HealthAPI) RegisterHandlers(router *mux.Router) {
 // HealthCheckApiHandler is an HTTP handler that responds with a 200 OK status
 // when the /health-check endpoint is accessed. This can be used for health
 // checks or liveness probes.
+
+// Healthcheck godoc
+// @Summary ping example
+// @Schemes
+// @Description do ping
+// @Tags HealthCheck
+// @Accept json
+// @Produce json
+// @Success 200 {string} ok
+// @Router /health-check [get]
 func (api *HealthAPI) HealthCheckApiHandler(w http.ResponseWriter, r *http.Request) {
 	response.SendResponseRaw(w, http.StatusOK, []byte("OK"))
 }

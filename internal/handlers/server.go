@@ -12,7 +12,10 @@ import (
 	"net"
 	"net/http"
 
+	_ "golang-rest-api-template/docs"
+
 	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 type Server struct {
@@ -26,12 +29,18 @@ func NewServer(address string, logger *logger.Logger, db *database.Database) (*S
 	// Create a new router
 	router := mux.NewRouter()
 
+	// swagger docs
+	// Serve Swagger UI
+	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+
+	r := router.PathPrefix("/api").Subrouter()
+
 	// health check API
 	healthAPI := health.NewHealthAPI(logger)
-	healthAPI.RegisterHandlers(router)
+	healthAPI.RegisterHandlers(r)
 
 	//Create versioned subrouter (e.g., /v1)
-	apiV1 := router.PathPrefix("/v1").Subrouter()
+	apiV1 := r.PathPrefix("/v1").Subrouter()
 
 	// Register all middlewares
 	middlewares := func(handler http.Handler) http.Handler {

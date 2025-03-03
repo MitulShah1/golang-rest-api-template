@@ -12,6 +12,21 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Product godoc
+// @Summary Update Product example
+// @Schemes
+// @Description Update Product example
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param id path int true "Product ID"
+// @Param product body model.UpdateProductRequest true "Product"
+// @Success 	 200  {object}  model.StandardResponse
+// @Failure      401  {object}  model.StandardResponse
+// @Failure      400  {object}  model.StandardResponse
+// @Failure      404  {string}  "404 page not found"
+// @Failure      500  {object}  model.StandardResponse
+// @Router /v1/product/{id} [put]
 func (p *ProductAPI) UpdateProductDetail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}
@@ -61,5 +76,6 @@ func (p *ProductAPI) UpdateProductDetail(w http.ResponseWriter, r *http.Request)
 
 	// Send success response
 	res.IsSuccess = true
+	res.Message = "Product updated successfully"
 	p.sendJSONResponse(w, res, http.StatusOK)
 }

@@ -10,6 +10,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Product godoc
+// @Summary Get Product details example
+// @Schemes
+// @Description Get Product details example
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param id path int true "Product ID"
+// @Success 	 200  {object}  model.ProductDetailResponse
+// @Failure      401  {object}  model.StandardResponse
+// @Failure      400  {object}  model.StandardResponse
+// @Failure      404  {string}  "404 page not found"
+// @Failure      500  {object}  model.StandardResponse
+// @Router /v1/product/{id} [get]
 func (p *ProductAPI) GetProductDetail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}
