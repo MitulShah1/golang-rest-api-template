@@ -3,12 +3,41 @@
 # ───────────────────────────────────────────────────────────
 FROM golang:1.21 AS builder
 
+# Accept build arguments
+ARG SERVER_PORT
+ARG DB_HOST
+ARG DB_PORT
+ARG DB_USER
+ARG DB_PASSWORD
+ARG DB_NAME
+ARG DEBUG
+ARG DISABLE_LOGS
+ARG LOG_FORMAT
+ARG LOG_CALLER
+ARG LOG_STACKTRACE
+ARG SWAG_VERSION
+ARG MIGRATE_VERSION
+ARG LINT_VERSION
+ARG IMPORTS_VERSION
+ARG VULN_VERSION
+
 # Set environment variables for versions (same as Makefile)
-ARG SWAG_VERSION=v1.16.4
-ARG MIGRATE_VERSION=v4.16.2
-ARG LINT_VERSION=v1.59.1
-ARG IMPORTS_VERSION=v0.24.0
-ARG VULN_VERSION=v1.1.3
+ENV SERVER_PORT=$SERVER_PORT
+ENV DB_HOST=$DB_HOST
+ENV DB_PORT=$DB_PORT
+ENV DB_USER=$DB_USER
+ENV DB_PASSWORD=$DB_PASSWORD
+ENV DB_NAME=$DB_NAME
+ENV DEBUG=$DEBUG
+ENV DISABLE_LOGS=$DISABLE_LOGS
+ENV LOG_FORMAT=$LOG_FORMAT
+ENV LOG_CALLER=$LOG_CALLER
+ENV LOG_STACKTRACE=$LOG_STACKTRACE
+ARG SWAG_VERSION=$SWAG_VERSION
+ARG MIGRATE_VERSION=$MIGRATE_VERSION
+ARG LINT_VERSION=$LINT_VERSION
+ARG IMPORTS_VERSION=$IMPORTS_VERSION
+ARG VULN_VERSION=$VULN_VERSION
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -37,11 +66,14 @@ RUN curl -L https://github.com/golang-migrate/migrate/releases/download/${MIGRAT
 # Copy the entire project into the container
 COPY . .
 
+# 🔥 Ensure `/app/build/` exists
+RUN mkdir -p /app/build
+
 # Generate Swagger documentation
 RUN make generate_docs
 
-# Build the Go application 
-RUN CGO_ENABLED=0 GOOS=linux make build
+# 🔥 Build the Go application using Makefile
+RUN make build
 
 # ───────────────────────────────────────────────────────────
 # 🌟 STAGE 2: CREATE A SMALLER FINAL IMAGE
@@ -68,7 +100,7 @@ COPY --from=builder /app/package/database/migrations /app/migrations
 COPY --from=builder /usr/local/bin/migrate /usr/local/bin/migrate
 
 # Expose the application port
-EXPOSE 8080
+EXPOSE ${SERVER_PORT}
 
 # Run the application
 CMD ["/app/server"]

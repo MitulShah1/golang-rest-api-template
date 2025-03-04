@@ -2,7 +2,6 @@ package config
 
 import (
 	"context"
-	"errors"
 	"golang-rest-api-template/internal/handlers"
 	"golang-rest-api-template/package/database"
 	"golang-rest-api-template/package/logger"
@@ -49,13 +48,13 @@ func NewService() *Service {
 // of the initialization steps fail.
 func (cnf *Service) Init() (err error) {
 
+	//initiale logger
+	cnf.Logger = logger.NewLogger(logger.DefaultOptions())
+
 	//Load Env variables
 	if err := cnf.LoadConfig(); err != nil {
 		return err
 	}
-
-	//initiale logger
-	cnf.Logger = logger.NewLogger(logger.DefaultOptions())
 
 	//initiale database
 	cnf.db, err = database.NewDatabase(database.DBConfig{
@@ -117,7 +116,7 @@ func (cnf *Service) Run() error {
 func (cnf *Service) LoadConfig() error {
 	//loads environment variables from .env file
 	if err := godotenv.Load(); err != nil {
-		return errors.New("no .env file found, using system environment variables")
+		cnf.Logger.Warn("no .env file found, using system environment variables")
 	}
 
 	cnf.dbEnv = DBConfig{
@@ -130,7 +129,7 @@ func (cnf *Service) LoadConfig() error {
 
 	//Server config
 	cnf.srvConfg = ServerConf{
-		Address: getEnv("SERVER_ADDR", "localhost"),
+		Address: getEnv("SERVER_ADDR", ""),
 		Port:    getEnv("SERVER_PORT", "8080"),
 	}
 

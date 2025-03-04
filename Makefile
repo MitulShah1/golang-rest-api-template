@@ -3,6 +3,10 @@ include .env
 
 # Get repository name from current directory
 REPO_NAME ?= $(shell basename "$$(pwd)")
+BUILD_NAME=server
+BUILD_DIR=build
+CMD_DIR=cmd/server
+GO_FLAGS=-ldflags "-s -w"  # Strip debug info for a smaller binary
 
 # Coverage directory
 COVERAGE_DIR ?= .coverage
@@ -149,17 +153,21 @@ generate_docs: install_swag
 # ───────────────────────────────────────────────────────────
 # 🏗️ BUILD PROJECT
 # ───────────────────────────────────────────────────────────
-build: 
-	@echo -e "$(BLUE)🏗️ Building the project...$(NC)"
-	@go build -o build/server cmd/server/main.go
+build:	
+	@echo -e "$(BLUE)🏗️ Building the Go application...$(NC)"
+	@mkdir -p $(BUILD_DIR)  # ✅ Ensure the build directory exists
+	@CGO_ENABLED=0 GOOS=linux go build $(GO_FLAGS) -o $(BUILD_DIR)/$(BUILD_NAME) $(CMD_DIR)/main.go
+	@ls -lh $(BUILD_DIR)  # ✅ Debug: List contents of the build directory
+	@echo -e "$(GREEN)✅ Build complete: $(BUILD_DIR)/$(BUILD_NAME)$(NC)"
 
 # ───────────────────────────────────────────────────────────
 # 🧹 CLEAN BUILD & COVERAGE FILES
 # ───────────────────────────────────────────────────────────
 clean:
 	@echo -e "$(YELLOW)🧹 Cleaning up build and coverage files...$(NC)"
-	@rm -rf build/*
-	@rm -rf $(COVERAGE_DIR)	
+	@rm -rf $(BUILD_DIR)
+	@rm -rf $(COVERAGE_DIR)
+	@echo -e "$(GREEN)✅ Cleanup complete!$(NC)"
 
 # ───────────────────────────────────────────────────────────
 # 🔍 CHECK MIGRATION VERSION
@@ -209,23 +217,15 @@ migrate_down:
 # ───────────────────────────────────────────────────────────
 # 🐳 BUILD DOCKER IMAGE
 # ───────────────────────────────────────────────────────────
-docker_build: env
+docker_build: env docker_down
 	@echo -e "$(BLUE)🐳 Building Docker image...$(NC)"
 	@sudo docker-compose build
 	@echo -e "$(GREEN)✅ Docker image built successfully!$(NC)"
 
 # ───────────────────────────────────────────────────────────
-# 🐳 BUILD DOCKER IMAGE
-# ───────────────────────────────────────────────────────────
-docker_build_no_cache: env
-	@echo -e "$(BLUE)🐳 Building Docker image...$(NC)"
-	@sudo docker-compose build --no-cache
-	@echo -e "$(GREEN)✅ Docker image built successfully!$(NC)"
-
-# ───────────────────────────────────────────────────────────
 # 🚀 START DOCKER CONTAINERS
 # ───────────────────────────────────────────────────────────
-docker_up: env docker_build
+docker_up: docker_build
 	@echo -e "$(BLUE)🚀 Starting Docker containers...$(NC)"
 	@sudo docker-compose up -d
 	@echo -e "$(GREEN)✅ Docker containers started successfully!$(NC)"
