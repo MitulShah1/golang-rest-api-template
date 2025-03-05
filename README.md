@@ -1,6 +1,5 @@
 # golang-rest-api-template
 Go Rest API Templates
-[![GoDoc Badge]][godoc] [![GoReportCard Badge]][goreportcard]
 
 ## Overview
 This is a template for building production-ready and easily extendible REST API using Go. It follows best practices and includes a standardized project structure with all necessary components for building scalable microservices.
@@ -22,11 +21,11 @@ The main ones are:
 * [go-playground/validator](https://github.com/go-playground/validator) for request validation
 * [go-sql-driver/mysql](https://github.com/go-sql-driver/mysql) for MySQL database access
 * [jmoiron/sqlx](https://github.com/jmoiron/sqlx) for enhanced database access
-* [Masterminds/squirrel"](https://github.com/Masterminds/squirrel) for SQL builder
+* [Masterminds/squirrel](https://github.com/Masterminds/squirrel) for SQL builder
 * [golang-migrate/migrate](https://github.com/golang-migrate/migrate) for database migrations
 * [swaggo/swag](https://github.com/swaggo/swag) for API documentation generation
 * [strechr/testify](https://github.com/stretchr/testify) for writing easier test assertions
-* [mockery/latest/](https://vektra.github.io/mockery/) for generating mock interfaces
+* [mockery/](https://vektra.github.io/mockery/) for generating mock interfaces
 * [uber/zap](go.uber.org/zap) for structured logging
 ## Project Structure
 ```
