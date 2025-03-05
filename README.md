@@ -1,44 +1,9 @@
 # golang-rest-api-template
 Go Rest API Templates
+[![GoDoc Badge]][godoc] [![GoReportCard Badge]][goreportcard]
 
 ## Overview
-This is a template for building production-ready REST APIs using Go. It follows best practices and includes a standardized project structure with all necessary components for building scalable microservices.
-
-## Project Structure
-```
-golang-microservice-template/
-│── cmd/
-│   ├── server/                # Main entry point for the service
-│   │   ├── main.go
-│── config/
-│   ├── config.go              # Application configuration
-│── internal/
-│   ├── handlers/              # HTTP handlers
-│   ├── services/              # Business logic
-│   ├── repository/            # Data access layer
-│   ├── models/                # Structs & DTOs
-│   │   ├── user.go
-│── pkg/                       # Utility packages (logging, middleware, etc.)
-│   ├── logger/
-│   │   ├── logger.go
-│   ├── middleware/
-│   │   ├── auth.go
-│── api/
-│   ├── swagger/               # API documentation
-│── test/
-│   ├── e2e/                   # End-to-end tests
-│   │   ├── user_test.go
-│── migrations/                # Database migrations
-│── scripts/                   # Automation scripts
-│   ├── entrypoint.sh          # Docker entrypoint script
-│── Dockerfile                 # Docker build configuration
-│── docker-compose.yml          # Docker Compose setup
-│── Makefile                    # Build automation
-│── go.mod                      # Go module dependencies
-│── go.sum                      # Dependencies lock file
-│── Jenkinsfile                 # Jenkins CI/CD pipeline
-│── README.md                   # Project documentation
-```
+This is a template for building production-ready and easily extendible REST API using Go. It follows best practices and includes a standardized project structure with all necessary components for building scalable microservices.
 
 ## Features
 - Structured logging
@@ -51,10 +16,55 @@ golang-microservice-template/
 - End-to-end testing
 - Makefile for common operations
 
+The main ones are:
+
+* [gorilla/mux](http://www.gorillatoolkit.org/pkg/mux) for routing
+* [go-playground/validator](https://github.com/go-playground/validator) for request validation
+* [go-sql-driver/mysql](https://github.com/go-sql-driver/mysql) for MySQL database access
+* [jmoiron/sqlx](https://github.com/jmoiron/sqlx) for enhanced database access
+* [Masterminds/squirrel"](https://github.com/Masterminds/squirrel) for SQL builder
+* [golang-migrate/migrate](https://github.com/golang-migrate/migrate) for database migrations
+* [swaggo/swag](https://github.com/swaggo/swag) for API documentation generation
+* [strechr/testify](https://github.com/stretchr/testify) for writing easier test assertions
+* [mockery/latest/](https://vektra.github.io/mockery/) for generating mock interfaces
+* [uber/zap](go.uber.org/zap) for structured logging
+## Project Structure
+```
+golang-microservice-template/
+│── cmd/
+│   ├── server/                # Main entry point for the service
+│   │   ├── main.go
+│── config/
+│   ├── config.go              # Application configuration
+│── docs/                      # API documentation
+│── internal/
+│   ├── handlers/              # HTTP handlers
+│   │   ├── server.go          # HTTP server
+│   ├── services/              # Business logic
+│   ├── repository/            # Data access layer
+│── package/                   # Utility packages (database, logging, middleware, etc.)
+│   ├── database/
+│   │   ├── database.go
+│── │   ├──migrations/         # Database migrations
+│   ├── logger/
+│   │   ├── logger.go
+│   ├── middleware/
+│   │   ├── basic_auth.go
+│   │   ├── cors.go
+│── test/
+│   ├── e2e/                    # End-to-end tests
+│── Dockerfile                  # Docker build configuration
+│── docker-compose.yml          # Docker Compose setup
+│── Makefile                    # Build automation
+│── go.mod                      # Go module dependencies
+│── go.sum                      # Dependencies lock file
+│── README.md                   # Project documentation
+```
+
 ## Getting Started
 
 ### Prerequisites
-- Go 1.16 or higher
+- Go 1.21 or higher
 - Docker and Docker Compose
 - Make
 
@@ -64,9 +74,14 @@ golang-microservice-template/
 git clone https://github.com/MitulShah1/golang-rest-api-template.git
 ```
 
-2. Start the application using Docker Compose
+2. Create .env file from .env.example add details
 ```bash
-docker-compose up
+make env
+```
+
+3. Start the application using Docker Compose
+```bash
+make docker_up
 ```
 
 ### Development
@@ -82,11 +97,26 @@ make test
 
 Generate API documentation:
 ```bash
-make swagger
+make generate_docs
+```
+
+### DB Migrations
+Create Migration:
+```bash
+make create_migration
+```
+```bash
+Run Migrations:
+```
+```bash
+make migration_up
 ```
 
 ## Configuration
-Configuration is managed through `config/config.yaml`. Environment variables can override these settings.
+Configuration is managed through `.env`. Environment variables can override these settings.
+
+## API  Documentation
+API documentation is generated using Swagger. The documentation is available at `http://localhost:8080/swagger/index.html`.
 
 ## Testing
 - Unit tests are alongside the code
