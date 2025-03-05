@@ -1,5 +1,6 @@
 # golang-rest-api-template
-Go Rest API Templates
+[![license](https://img.shields.io/badge/license-MIT-green)](https://raw.githubusercontent.com/MitulShah1/golang-rest-api-template/main/LICENSE)
+[![build](https://github.com/MitulShah1/golang-rest-api-template//actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/MitulShah1/golang-rest-api-template/actions/workflows/go.yml)
 
 ## Overview
 This is a template for building production-ready and easily extendible REST API using Go. It follows best practices and includes a standardized project structure with all necessary components for building scalable microservices.
@@ -104,11 +105,15 @@ Create Migration:
 ```bash
 make create_migration
 ```
-```bash
+
 Run Migrations:
-```
 ```bash
 make migration_up
+```
+
+Down Migrations:
+```bash
+make migration_down
 ```
 
 ## Configuration
