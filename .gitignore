@@ -23,3 +23,10 @@ go.work.sum
 
 # env file
 .env
+
+#ignore build
+build/*
+/bkp
+
+#ignore test coverage
+.coverage

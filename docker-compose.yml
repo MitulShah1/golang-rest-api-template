@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # ───────────────────────────────────────────────────────────
+  # 🌟 DATABASE SERVICE (MySQL)
+  # ───────────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: mysql_container
+    restart: always
+    env_file:
+      - .env  # ✅ Load environment variables from .env
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app_network
+
+  # ───────────────────────────────────────────────────────────
+  # 🌟 GOLANG APPLICATION
+  # ───────────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      args:
+        SERVER_PORT: ${SERVER_PORT}
+        DB_HOST: ${DB_HOST}
+        DB_PORT: ${DB_PORT}
+        DB_USER: ${DB_USER}
+        DB_PASSWORD: ${DB_PASSWORD}
+        DB_NAME: ${DB_NAME}
+        DEBUG: ${DEBUG}
+        DISABLE_LOGS: ${DISABLE_LOGS}
+        LOG_FORMAT: ${LOG_FORMAT}
+        LOG_CALLER: ${LOG_CALLER}
+        LOG_STACKTRACE: ${LOG_STACKTRACE}
+        SWAG_VERSION: ${SWAG_VERSION}
+        MIGRATE_VERSION: ${MIGRATE_VERSION}
+        LINT_VERSION: ${LINT_VERSION}
+        IMPORTS_VERSION: ${IMPORTS_VERSION}
+        VULN_VERSION: ${VULN_VERSION}
+    container_name: go_app
+    restart: always
+    depends_on:
+       db:
+        condition: service_healthy  # ✅ Waits for MySQL to be ready
+    ports:
+      - ${SERVER_PORT}:8080
+    env_file:
+      - .env  # ✅ Load environment variables from .env
+    networks:
+      - app_network
+
+# ───────────────────────────────────────────────────────────
+# 🌟 NETWORK & VOLUME CONFIGURATION
+# ───────────────────────────────────────────────────────────
+networks:
+  app_network:
+
+volumes:
+  db_data:
