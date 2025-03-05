@@ -48,6 +48,237 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/category/{id}": {
+            "get": {
+                "description": "Get Category details example",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get Category details example",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.CategoryByIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "404 page not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Category example",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Update Category example",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Category",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.UpdateCategoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "404 page not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Category example",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Delete Category example",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "404 page not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/create-category": {
+            "post": {
+                "description": "Create Category example",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Create Category example",
+                "parameters": [
+                    {
+                        "description": "Category",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.CreateCategoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.CreateCategoryResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "404 page not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/create-product": {
             "post": {
                 "description": "Create Product example",
@@ -68,7 +299,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.CreateProductRequest"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.CreateProductRequest"
                         }
                     }
                 ],
@@ -76,19 +307,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ProductDetailResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "404": {
@@ -100,7 +331,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     }
                 }
@@ -132,19 +363,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ProductDetailResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "404": {
@@ -156,7 +387,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     }
                 }
@@ -187,7 +418,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdateProductRequest"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.UpdateProductRequest"
                         }
                     }
                 ],
@@ -195,19 +426,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "404": {
@@ -219,7 +450,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     }
                 }
@@ -249,19 +480,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     },
                     "404": {
@@ -273,7 +504,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.StandardResponse"
+                            "$ref": "#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse"
                         }
                     }
                 }
@@ -281,7 +512,107 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.CreateProductRequest": {
+        "golang-rest-api-template_internal_handlers_category_model.CategoryByIDResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/golang-rest-api-template_internal_handlers_category_model.CategoryDetail"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "golang-rest-api-template_internal_handlers_category_model.CategoryDetail": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "golang-rest-api-template_internal_handlers_category_model.CreateCategoryRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "parent_id"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "golang-rest-api-template_internal_handlers_category_model.CreateCategoryResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "category_id": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "golang-rest-api-template_internal_handlers_category_model.StandardResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "golang-rest-api-template_internal_handlers_category_model.UpdateCategoryRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "parent_id"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "golang-rest-api-template_internal_handlers_product_model.CreateProductRequest": {
             "type": "object",
             "required": [
                 "category_id",
@@ -308,7 +639,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ProductDetailResponse": {
+        "golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse": {
             "type": "object",
             "properties": {
                 "category_id": {
@@ -331,7 +662,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.StandardResponse": {
+        "golang-rest-api-template_internal_handlers_product_model.StandardResponse": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -343,7 +674,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UpdateProductRequest": {
+        "golang-rest-api-template_internal_handlers_product_model.UpdateProductRequest": {
             "type": "object",
             "required": [
                 "category_id",

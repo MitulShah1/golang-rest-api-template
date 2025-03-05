@@ -116,12 +116,13 @@ test:
 # ───────────────────────────────────────────────────────────
 # 📊 GENERATE COVERAGE REPORT
 # ───────────────────────────────────────────────────────────
-html-coverage: $(COVERAGE_DIR)/.combined.html
+html-coverage: $(COVERAGE_DIR)/coverage.out
 	@echo -e "$(GREEN)📊 Generating HTML coverage report...$(NC)"
-	@go tool cover -html=$(COVERAGE_DIR)/.combined.html
+	@go tool cover -html=$(COVERAGE_DIR)/coverage.out -o $(COVERAGE_DIR)/coverage.html
+	@echo -e "$(GREEN)✅ HTML coverage report generated at $(COVERAGE_DIR)/coverage.html$(NC)"
 
-$(COVERAGE_DIR)/.combined.html: $(COVERAGE_DIR)/coverage.out | $(COVERAGE_DIR)
-	@go tool cover -func=$(COVERAGE_DIR)/coverage.out > $(COVERAGE_DIR)/.combined.html
+	# Open the file based on OS
+	@uname | grep -qi "darwin" && open $(COVERAGE_DIR)/coverage.html || xdg-open $(COVERAGE_DIR)/coverage.html
 
 $(COVERAGE_DIR)/coverage.out: | $(COVERAGE_DIR)
 	@echo -e "$(YELLOW)📈 Running coverage analysis...$(NC)"
@@ -147,7 +148,7 @@ install_swag:
 # ───────────────────────────────────────────────────────────
 generate_docs: install_swag
 	@echo -e "$(YELLOW)📜 Generating API documentation using Swag...$(NC)"
-	@swag init -g ./cmd/server/main.go -o ./docs
+	@swag init --parseDependency  --parseInternal --parseDepth 1 -g ./cmd/server/main.go -o ./docs
 	@echo -e "$(GREEN)✅ API documentation generated successfully!$(NC)"
 
 # ───────────────────────────────────────────────────────────

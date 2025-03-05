@@ -4,7 +4,9 @@ import "golang-rest-api-template/package/database"
 
 type DBRepository interface {
 	// Product Repository
-	ProductRepositoryInterface
+	ProductRepository
+	// Category Repository
+	CategoryRepository
 }
 
 type NewRepository struct {

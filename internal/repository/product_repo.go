@@ -14,7 +14,7 @@ const PRODUCT_TABLE_NAME = "products"
 // ProductRepositoryInterface defines the methods for interacting with the product repository.
 // The methods allow for retrieving product details, creating new products, updating existing products,
 // and deleting products.
-type ProductRepositoryInterface interface {
+type ProductRepository interface {
 	GetProductDetail(ctx context.Context, id int) (product *model.Product, err error)
 	CreateProduct(ctx context.Context, product *model.Product) (err error)
 	UpdateProduct(ctx context.Context, pid int, product *model.Product) (err error)

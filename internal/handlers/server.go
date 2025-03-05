@@ -5,6 +5,7 @@ import (
 	"golang-rest-api-template/internal/handlers/health"
 	prodApi "golang-rest-api-template/internal/handlers/product"
 	"golang-rest-api-template/internal/repository"
+	"golang-rest-api-template/internal/services/category"
 	"golang-rest-api-template/internal/services/product"
 	"golang-rest-api-template/package/database"
 	"golang-rest-api-template/package/logger"
@@ -13,6 +14,7 @@ import (
 	"net/http"
 
 	_ "golang-rest-api-template/docs"
+	catApi "golang-rest-api-template/internal/handlers/category"
 
 	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
@@ -63,6 +65,15 @@ func NewServer(address string, logger *logger.Logger, db *database.Database) (*S
 
 	// Register product handlers
 	productHandler.RegisterHandlers(apiV1)
+
+	// initialize category service
+	categoryService := category.NewCategoryService(repo, logger)
+
+	// initialize category handler
+	categoryHandler := catApi.NewCategoryAPI(logger, categoryService)
+
+	/// Register category handlers
+	categoryHandler.RegisterHandlers(apiV1)
 
 	httpLis, err := net.Listen(`tcp`, address)
 	if err != nil {

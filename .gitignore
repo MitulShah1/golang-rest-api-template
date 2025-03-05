@@ -26,6 +26,7 @@ go.work.sum
 
 #ignore build
 build/*
+/bkp
 
 #ignore test coverage
 .coverage

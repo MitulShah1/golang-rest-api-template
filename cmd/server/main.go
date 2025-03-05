@@ -2,6 +2,7 @@ package main
 
 import (
 	"golang-rest-api-template/config"
+	_ "golang-rest-api-template/internal/handlers/category/model"
 	"golang-rest-api-template/package/logger"
 )
 
