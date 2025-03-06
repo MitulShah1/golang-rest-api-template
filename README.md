@@ -68,6 +68,13 @@ golang-microservice-template/
 - Docker and Docker Compose
 - Make
 
+### All Make Commands
+To Check All Commands:
+```bash
+make help
+```
+![Make Help Commands](make_help.png)
+
 ### Running the Application
 1. Clone the repository
 ```bash
