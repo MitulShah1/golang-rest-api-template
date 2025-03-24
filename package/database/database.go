@@ -76,7 +76,7 @@ func NewDatabase(dbCnfg DBConfig) (*Database, error) {
 
 // Close gracefully shuts down the database connection
 func (d *Database) Close() {
-	d.DB.Close()
+	_ = d.DB.Close()
 }
 
 // getDSN builds the Data Source Name based on the driver
