@@ -2,10 +2,11 @@ package product
 
 import (
 	"encoding/json"
-	"golang-rest-api-template/internal/handlers/product/model"
-	"golang-rest-api-template/internal/response"
 	"net/http"
 	"strconv"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
+	"github.com/MitulShah1/golang-rest-api-template/internal/response"
 
 	"github.com/gorilla/mux"
 )

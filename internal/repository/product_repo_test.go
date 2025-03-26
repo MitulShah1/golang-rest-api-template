@@ -6,10 +6,10 @@ import (
 	"errors"
 	"testing"
 
-	"golang-rest-api-template/internal/repository/model"
-	"golang-rest-api-template/package/database"
+	"github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
+	"github.com/MitulShah1/golang-rest-api-template/package/database"
 
-	"golang-rest-api-template/package/database/mocks"
+	"github.com/MitulShah1/golang-rest-api-template/package/database/mocks"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"

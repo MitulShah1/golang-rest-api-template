@@ -2,14 +2,15 @@ package config
 
 import (
 	"context"
-	"golang-rest-api-template/internal/handlers"
-	"golang-rest-api-template/package/database"
-	"golang-rest-api-template/package/logger"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers"
+	"github.com/MitulShah1/golang-rest-api-template/package/database"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 
 	"github.com/joho/godotenv"
 )

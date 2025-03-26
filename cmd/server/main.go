@@ -1,9 +1,11 @@
 package main
 
 import (
-	"golang-rest-api-template/config"
-	_ "golang-rest-api-template/internal/handlers/category/model"
-	"golang-rest-api-template/package/logger"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
+
+	_ "github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
+
+	"github.com/MitulShah1/golang-rest-api-template/config"
 )
 
 // @title           REST API Template Example

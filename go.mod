@@ -1,4 +1,4 @@
-module golang-rest-api-template
+module github.com/MitulShah1/golang-rest-api-template
 
 go 1.21.0
 

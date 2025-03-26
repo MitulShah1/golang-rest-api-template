@@ -2,19 +2,20 @@ package handlers
 
 import (
 	"context"
-	"golang-rest-api-template/internal/handlers/health"
-	prodApi "golang-rest-api-template/internal/handlers/product"
-	"golang-rest-api-template/internal/repository"
-	"golang-rest-api-template/internal/services/category"
-	"golang-rest-api-template/internal/services/product"
-	"golang-rest-api-template/package/database"
-	"golang-rest-api-template/package/logger"
-	"golang-rest-api-template/package/middleware"
 	"net"
 	"net/http"
 
-	_ "golang-rest-api-template/docs"
-	catApi "golang-rest-api-template/internal/handlers/category"
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/health"
+	prodApi "github.com/MitulShah1/golang-rest-api-template/internal/handlers/product"
+	"github.com/MitulShah1/golang-rest-api-template/internal/repository"
+	"github.com/MitulShah1/golang-rest-api-template/internal/services/category"
+	"github.com/MitulShah1/golang-rest-api-template/internal/services/product"
+	"github.com/MitulShah1/golang-rest-api-template/package/database"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
+	"github.com/MitulShah1/golang-rest-api-template/package/middleware"
+
+	_ "github.com/MitulShah1/golang-rest-api-template/docs"
+	catApi "github.com/MitulShah1/golang-rest-api-template/internal/handlers/category"
 
 	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
