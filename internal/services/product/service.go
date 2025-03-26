@@ -2,10 +2,11 @@ package product
 
 import (
 	"context"
-	"golang-rest-api-template/internal/handlers/product/model"
-	"golang-rest-api-template/internal/repository"
-	sqlModel "golang-rest-api-template/internal/repository/model"
-	"golang-rest-api-template/package/logger"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
+	"github.com/MitulShah1/golang-rest-api-template/internal/repository"
+	sqlModel "github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 )
 
 type ProductServiceInterface interface {

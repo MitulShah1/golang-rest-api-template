@@ -2,10 +2,11 @@ package category
 
 import (
 	"encoding/json"
-	"golang-rest-api-template/internal/handlers/category/model"
-	"golang-rest-api-template/internal/response"
 	"net/http"
 	"strconv"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
+	"github.com/MitulShah1/golang-rest-api-template/internal/response"
 
 	"github.com/gorilla/mux"
 )

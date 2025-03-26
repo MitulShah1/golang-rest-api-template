@@ -3,7 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"golang-rest-api-template/internal/repository/model"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
 
 	"github.com/Masterminds/squirrel"
 )

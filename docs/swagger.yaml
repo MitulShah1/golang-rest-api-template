@@ -1,15 +1,15 @@
 basePath: /api
 definitions:
-  golang-rest-api-template_internal_handlers_category_model.CategoryByIDResponse:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CategoryByIDResponse:
     properties:
       data:
-        $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.CategoryDetail'
+        $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CategoryDetail'
       message:
         type: string
       success:
         type: boolean
     type: object
-  golang-rest-api-template_internal_handlers_category_model.CategoryDetail:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CategoryDetail:
     properties:
       description:
         type: string
@@ -20,7 +20,7 @@ definitions:
       parent_id:
         type: integer
     type: object
-  golang-rest-api-template_internal_handlers_category_model.CreateCategoryRequest:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CreateCategoryRequest:
     properties:
       description:
         type: string
@@ -33,7 +33,7 @@ definitions:
     - name
     - parent_id
     type: object
-  golang-rest-api-template_internal_handlers_category_model.CreateCategoryResponse:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CreateCategoryResponse:
     properties:
       data:
         properties:
@@ -45,7 +45,7 @@ definitions:
       success:
         type: boolean
     type: object
-  golang-rest-api-template_internal_handlers_category_model.StandardResponse:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse:
     properties:
       data: {}
       message:
@@ -53,7 +53,7 @@ definitions:
       success:
         type: boolean
     type: object
-  golang-rest-api-template_internal_handlers_category_model.UpdateCategoryRequest:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.UpdateCategoryRequest:
     properties:
       description:
         type: string
@@ -66,7 +66,7 @@ definitions:
     - name
     - parent_id
     type: object
-  golang-rest-api-template_internal_handlers_product_model.CreateProductRequest:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.CreateProductRequest:
     properties:
       category_id:
         type: integer
@@ -85,7 +85,7 @@ definitions:
     - price
     - stock
     type: object
-  golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse:
     properties:
       category_id:
         type: integer
@@ -100,7 +100,7 @@ definitions:
       stock:
         type: integer
     type: object
-  golang-rest-api-template_internal_handlers_product_model.StandardResponse:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse:
     properties:
       data: {}
       message:
@@ -108,7 +108,7 @@ definitions:
       success:
         type: boolean
     type: object
-  golang-rest-api-template_internal_handlers_product_model.UpdateProductRequest:
+  github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.UpdateProductRequest:
     properties:
       category_id:
         type: integer
@@ -177,15 +177,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "404":
           description: 404 page not found
           schema:
@@ -193,7 +193,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
       summary: Delete Category example
       tags:
       - Category
@@ -213,15 +213,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.CategoryByIDResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CategoryByIDResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "404":
           description: 404 page not found
           schema:
@@ -229,7 +229,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
       summary: Get Category details example
       tags:
       - Category
@@ -248,22 +248,22 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.UpdateCategoryRequest'
+          $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.UpdateCategoryRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "404":
           description: 404 page not found
           schema:
@@ -271,7 +271,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
       summary: Update Category example
       tags:
       - Category
@@ -286,22 +286,22 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.CreateCategoryRequest'
+          $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CreateCategoryRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.CreateCategoryResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CreateCategoryResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
         "404":
           description: 404 page not found
           schema:
@@ -309,7 +309,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
       summary: Create Category example
       tags:
       - Category
@@ -324,22 +324,22 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.CreateProductRequest'
+          $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.CreateProductRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "404":
           description: 404 page not found
           schema:
@@ -347,7 +347,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
       summary: Create Product example
       tags:
       - Product
@@ -368,15 +368,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "404":
           description: 404 page not found
           schema:
@@ -384,7 +384,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
       summary: Delete Product example
       tags:
       - Product
@@ -404,15 +404,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "404":
           description: 404 page not found
           schema:
@@ -420,7 +420,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
       summary: Get Product details example
       tags:
       - Product
@@ -439,22 +439,22 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.UpdateProductRequest'
+          $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.UpdateProductRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "404":
           description: 404 page not found
           schema:
@@ -462,7 +462,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/golang-rest-api-template_internal_handlers_product_model.StandardResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
       summary: Update Product example
       tags:
       - Product

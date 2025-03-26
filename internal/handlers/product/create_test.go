@@ -9,9 +9,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"golang-rest-api-template/internal/handlers/product/model"
-	"golang-rest-api-template/internal/services/product/mocks"
-	"golang-rest-api-template/package/logger"
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
+	"github.com/MitulShah1/golang-rest-api-template/internal/services/product/mocks"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -2,10 +2,11 @@ package category
 
 import (
 	"context"
-	"golang-rest-api-template/internal/handlers/category/model"
-	"golang-rest-api-template/internal/repository"
-	sqlModel "golang-rest-api-template/internal/repository/model"
-	"golang-rest-api-template/package/logger"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
+	"github.com/MitulShah1/golang-rest-api-template/internal/repository"
+	sqlModel "github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 )
 
 type CategoryServiceInterface interface {
