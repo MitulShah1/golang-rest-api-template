@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -18,9 +17,10 @@ var (
 const (
 	httpRequestsCount    = "http_requests_total"
 	httpRequestsDuration = "http_request_duration_seconds"
+	defaultSubsystem     = "golang_rest_api_template"
 )
 
-// Config is the configuration for the middleware
+// Config specifies options how to create new PrometheusMiddleware.
 type Config struct {
 
 	// Namespace is components of the fully-qualified name of the Metric (created by joining Namespace,Subsystem and Name components with "_")
@@ -46,58 +46,61 @@ type prometheusMiddleware struct {
 
 	// cfg is the configuration
 	cfg Config
+
+	// reg is a prometheus registry
+	reg prometheus.Registerer
 }
 
 // NewPrometheusMiddleware creates a new PrometheusMiddleware instance
 func NewPrometheusMiddleware(cnfg Config) *prometheusMiddleware {
-	var prometheusMiddleware prometheusMiddleware
 
-	prometheusMiddleware.request = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Namespace: cnfg.Namespace,
-			Subsystem: cnfg.Subsystem,
-			Name:      httpRequestsCount,
-			Help:      "How many HTTP requests processed, partitioned by status code, method and HTTP path.",
-		},
-		[]string{"code", "method", "path"},
-	)
-
-	if err := prometheus.Register(prometheusMiddleware.request); err != nil {
-		log.Println("prometheusMiddleware.request was not registered:", err)
+	// Set default subsystem if not provided
+	if cnfg.Subsystem == "" {
+		cnfg.Subsystem = defaultSubsystem
 	}
 
+	// Fix bucket assignment logic
 	buckets := dflBuckets
-	if len(cnfg.Buckets) == 0 {
+	if len(cnfg.Buckets) > 0 {
 		buckets = cnfg.Buckets
 	}
 
-	prometheusMiddleware.latency = prometheus.NewHistogramVec(prometheus.HistogramOpts{
-		Namespace: cnfg.Namespace,
-		Subsystem: cnfg.Subsystem,
-		Name:      httpRequestsDuration,
-		Help:      "How long it took to process the request, partitioned by status code, method and HTTP path.",
-		Buckets:   buckets,
-	},
-		[]string{"code", "method", "path"},
-	)
-
-	if err := prometheus.Register(prometheusMiddleware.latency); err != nil {
-		log.Println("prometheusMiddleware.latency was not registered:", err)
+	m := &prometheusMiddleware{
+		reg: prometheus.DefaultRegisterer,
+		cfg: cnfg,
+		request: prometheus.NewCounterVec(
+			prometheus.CounterOpts{
+				Namespace: cnfg.Namespace,
+				Subsystem: cnfg.Subsystem,
+				Name:      httpRequestsCount,
+				Help:      "How many HTTP requests processed, partitioned by status code, method and HTTP path.",
+			},
+			[]string{"code", "method", "path"},
+		),
+		latency: prometheus.NewHistogramVec(prometheus.HistogramOpts{
+			Namespace: cnfg.Namespace,
+			Subsystem: cnfg.Subsystem,
+			Name:      httpRequestsDuration,
+			Help:      "How long it took to process the request, partitioned by status code, method and HTTP path.",
+			Buckets:   buckets,
+		},
+			[]string{"code", "method", "path"},
+		),
 	}
 
 	// Register all the middleware metrics on prometheus registerer.
-	//prometheusMiddleware.registerMetrics()
+	m.registerMetrics()
 
-	return &prometheusMiddleware
+	return m
 }
 
 // registerMetrics registers all the metrics on prometheus registerer.
-// func (m *prometheusMiddleware) registerMetrics() {
-// 	m.reg.MustRegister(
-// 		m.request,
-// 		m.latency,
-// 	)
-// }
+func (m *prometheusMiddleware) registerMetrics() {
+	m.reg.MustRegister(
+		m.request,
+		m.latency,
+	)
+}
 
 // Middleware implements the middleware function that will be called by the Gorilla Mux router
 // to handle the request.
@@ -105,25 +108,32 @@ func (p *prometheusMiddleware) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		begin := time.Now()
 
-		delegate := &responseWriterDelegator{ResponseWriter: w}
-		rw := delegate
+		delegate := &responseWriterDelegator{
+			ResponseWriter: w,
+			status:         http.StatusOK, // Initialize with default status
+		}
 
-		next.ServeHTTP(rw, r) // call original
+		next.ServeHTTP(delegate, r) // call original
 
 		route := mux.CurrentRoute(r)
-		path, _ := route.GetPathTemplate()
+
+		path := ""
+		if route != nil {
+			path, _ = route.GetPathTemplate()
+		} else {
+			// If no route was matched, it's a 404
+			path = r.URL.Path
+			if p.cfg.DoNotUseRequestPathFor404 {
+				path = "404"
+			}
+		}
 
 		code := sanitizeCode(delegate.status)
 		method := sanitizeMethod(r.Method)
 
-		/// If the status code is 404, and we don't want to use the request path for 404s,
-		if p.cfg.DoNotUseRequestPathFor404 && code == "404" {
-			path = "404"
-		}
-
-		go p.request.WithLabelValues(code, method, path).Inc()
-
-		go p.latency.WithLabelValues(code, method, path).Observe(float64(time.Since(begin)) / float64(time.Second))
+		// Execute counter and histogram operations directly instead of in goroutines
+		p.request.WithLabelValues(code, method, path).Inc()
+		p.latency.WithLabelValues(code, method, path).Observe(float64(time.Since(begin)) / float64(time.Second))
 	})
 }
 
