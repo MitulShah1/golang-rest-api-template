@@ -28,7 +28,7 @@ type Server struct {
 	logger   *logger.Logger
 }
 
-func NewServer(address string, logger *logger.Logger, db *database.Database) (*Server, error) {
+func NewServer(address string, logger *logger.Logger, db *database.Database, tm middleware.TelemetryConfig) (*Server, error) {
 
 	// Create a new router
 	router := mux.NewRouter()
@@ -39,11 +39,16 @@ func NewServer(address string, logger *logger.Logger, db *database.Database) (*S
 
 	// Promotheus metrics
 	promotheuseMiddleware := middleware.NewPrometheusMiddleware(middleware.Config{
-		Namespace: "golang_rest_api_template",
-		Subsystem: "http",
+		DoNotUseRequestPathFor404: true,
 	})
 
-	router.Use(promotheuseMiddleware.Middleware)
+	mw := func(handler http.Handler) http.Handler {
+		return promotheuseMiddleware.Middleware(
+			tm.OpenTelemetryMiddleware(handler),
+		)
+	}
+
+	router.Use(mw)
 
 	router.Handle("/metrics", promhttp.Handler())
 

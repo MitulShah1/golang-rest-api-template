@@ -34,6 +34,8 @@ The main ones are:
 - [mockery](https://vektra.github.io/mockery/) for generating mock interfaces
 - [uber/zap](go.uber.org/zap) for structured logging
 - [prometheus/client_golang](https://github.com/prometheus/client_golang) for metrics
+- [otel](https://opentelemetry.io/) for observability
+- [jaeger](https://www.jaegertracing.io/) for distributed tracing
 
 ## Project Structure
 
