@@ -13,6 +13,7 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/package/database"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 	"github.com/MitulShah1/golang-rest-api-template/package/middleware"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	_ "github.com/MitulShah1/golang-rest-api-template/docs"
 	catApi "github.com/MitulShah1/golang-rest-api-template/internal/handlers/category"
@@ -35,6 +36,16 @@ func NewServer(address string, logger *logger.Logger, db *database.Database) (*S
 	// swagger docs
 	// Serve Swagger UI
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+
+	// Promotheus metrics
+	promotheuseMiddleware := middleware.NewPrometheusMiddleware(middleware.Config{
+		Namespace: "golang_rest_api_template",
+		Subsystem: "http",
+	})
+
+	router.Use(promotheuseMiddleware.Middleware)
+
+	router.Handle("/metrics", promhttp.Handler())
 
 	r := router.PathPrefix("/api").Subrouter()
 
