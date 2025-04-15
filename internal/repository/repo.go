@@ -1,6 +1,6 @@
 package repository
 
-import "golang-rest-api-template/package/database"
+import "github.com/MitulShah1/golang-rest-api-template/package/database"
 
 type DBRepository interface {
 	// Product Repository

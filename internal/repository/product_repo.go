@@ -4,7 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"golang-rest-api-template/internal/repository/model"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
 
 	"github.com/Masterminds/squirrel"
 )

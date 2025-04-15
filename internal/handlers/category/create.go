@@ -2,11 +2,12 @@ package category
 
 import (
 	"encoding/json"
-	"golang-rest-api-template/internal/handlers/category/model"
-	"golang-rest-api-template/internal/response"
-	"golang-rest-api-template/package/validation"
 	"io"
 	"net/http"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
+	"github.com/MitulShah1/golang-rest-api-template/internal/response"
+	"github.com/MitulShah1/golang-rest-api-template/package/validation"
 )
 
 // Category godoc

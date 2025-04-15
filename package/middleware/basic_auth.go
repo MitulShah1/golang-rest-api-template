@@ -3,9 +3,10 @@ package middleware
 import (
 	"encoding/base64"
 	"encoding/json"
-	"golang-rest-api-template/internal/response"
 	"net/http"
 	"strings"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/response"
 )
 
 // AuthMiddleware is a simple Basic Authentication middleware

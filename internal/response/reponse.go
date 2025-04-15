@@ -3,7 +3,7 @@ package response
 import (
 	"net/http"
 
-	"golang-rest-api-template/package/logger"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 )
 
 func sendResponse(w http.ResponseWriter, status int, resp []byte, contentType string) {

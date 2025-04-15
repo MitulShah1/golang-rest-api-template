@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"golang-rest-api-template/internal/handlers/product/model"
-	"golang-rest-api-template/package/logger"
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"

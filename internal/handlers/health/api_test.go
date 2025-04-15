@@ -3,7 +3,7 @@ package health
 import (
 	"testing"
 
-	"golang-rest-api-template/package/logger"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -7,9 +7,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"golang-rest-api-template/internal/handlers/category/model"
-	sqlModel "golang-rest-api-template/internal/repository/model"
-	"golang-rest-api-template/internal/services/category/mocks"
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
+	sqlModel "github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
+	"github.com/MitulShah1/golang-rest-api-template/internal/services/category/mocks"
 )
 
 var mockRepo = new(mocks.CategoryServiceInterface)

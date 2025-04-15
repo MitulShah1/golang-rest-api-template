@@ -2,26 +2,31 @@ package config
 
 import (
 	"context"
-	"golang-rest-api-template/internal/handlers"
-	"golang-rest-api-template/package/database"
-	"golang-rest-api-template/package/logger"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
+	"github.com/MitulShah1/golang-rest-api-template/internal/handlers"
+	"github.com/MitulShah1/golang-rest-api-template/package/database"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
+	"github.com/MitulShah1/golang-rest-api-template/package/middleware"
 	"github.com/joho/godotenv"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 )
 
 // Config holds application configuration
 type Service struct {
-	Name     string
-	Logger   *logger.Logger
-	Server   *handlers.Server
-	dbEnv    DBConfig
-	srvConfg ServerConf
-	db       *database.Database
+	Name         string
+	Logger       *logger.Logger
+	Server       *handlers.Server
+	dbEnv        DBConfig
+	srvConfg     ServerConf
+	jaegerConfig JaegerConfig
+	db           *database.Database
+	tp           *tracesdk.TracerProvider
 }
 
 type DBConfig struct {
@@ -35,6 +40,11 @@ type DBConfig struct {
 type ServerConf struct {
 	Address string
 	Port    string
+}
+
+type JaegerConfig struct {
+	AgentHost string
+	AgentPort string
 }
 
 func NewService() *Service {
@@ -70,9 +80,24 @@ func (cnf *Service) Init() (err error) {
 
 	cnf.Logger.Info("Database connection successful")
 
+	agentPort, _ := strconv.Atoi(cnf.jaegerConfig.AgentPort)
+	tmCnfg := middleware.TelemetryConfig{
+		Host:        cnf.jaegerConfig.AgentHost,
+		Port:        agentPort,
+		ServiceName: "go-rest-api-template",
+	}
+
+	// initialize tracer
+	cnf.tp, err = tmCnfg.InitTracer()
+	if err != nil {
+		return err
+	}
+
+	cnf.Logger.Info("Tracer initialized")
+
 	//initiale server
 	serverAddr := cnf.srvConfg.Address + ":" + cnf.srvConfg.Port
-	if cnf.Server, err = handlers.NewServer(serverAddr, cnf.Logger, cnf.db); err != nil {
+	if cnf.Server, err = handlers.NewServer(serverAddr, cnf.Logger, cnf.db, tmCnfg); err != nil {
 		return err
 	}
 
@@ -105,6 +130,11 @@ func (cnf *Service) Run() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	// Shutdown the tracer provider
+	if err := cnf.tp.Shutdown(ctx); err != nil {
+		cnf.Logger.Error("Failed to shutdown tracer provider", "error", err)
+	}
+
 	if err := cnf.Server.ServerDown(ctx); err != nil {
 		cnf.Logger.Error("Server shutdown failed", "error", err)
 	} else {
@@ -131,6 +161,12 @@ func (cnf *Service) LoadConfig() error {
 	cnf.srvConfg = ServerConf{
 		Address: getEnv("SERVER_ADDR", ""),
 		Port:    getEnv("SERVER_PORT", "8080"),
+	}
+
+	//Jaeger config
+	cnf.jaegerConfig = JaegerConfig{
+		AgentHost: getEnv("JAEGER_AGENT_HOST", "localhost"),
+		AgentPort: getEnv("JAEGER_AGENT_PORT", "6831"),
 	}
 
 	return nil

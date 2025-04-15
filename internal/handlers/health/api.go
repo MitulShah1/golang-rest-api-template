@@ -1,9 +1,10 @@
 package health
 
 import (
-	"golang-rest-api-template/internal/response"
-	"golang-rest-api-template/package/logger"
 	"net/http"
+
+	"github.com/MitulShah1/golang-rest-api-template/internal/response"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 
 	"github.com/gorilla/mux"
 )

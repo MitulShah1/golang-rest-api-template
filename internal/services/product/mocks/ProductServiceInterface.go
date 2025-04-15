@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
-	model "golang-rest-api-template/internal/handlers/product/model"
 
+	model "github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
 	mock "github.com/stretchr/testify/mock"
 )
 
