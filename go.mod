@@ -2,8 +2,6 @@ module github.com/MitulShah1/golang-rest-api-template
 
 go 1.23.0
 
-toolchain go1.23.8
-
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/Masterminds/squirrel v1.5.4
