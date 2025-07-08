@@ -5,7 +5,7 @@ go 1.23.0
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/Masterminds/squirrel v1.5.4
-	github.com/go-playground/validator/v10 v10.26.0
+	github.com/go-playground/validator/v10 v10.27.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/gorilla/mux v1.8.1
 	github.com/jmoiron/sqlx v1.4.0
