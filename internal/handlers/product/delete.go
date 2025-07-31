@@ -1,3 +1,5 @@
+// Package product provides HTTP handlers for product-related operations.
+// It includes endpoints for creating, reading, updating, and deleting products.
 package product
 
 import (
@@ -6,11 +8,10 @@ import (
 
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/response"
-
 	"github.com/gorilla/mux"
 )
 
-// Product godoc
+// DeleteProduct godoc
 // @Summary Delete Product example
 // @Schemes
 // @Description Delete Product example
@@ -21,9 +22,11 @@ import (
 // @Success 	 200  {object}  model.StandardResponse
 // @Failure      401  {object}  model.StandardResponse
 // @Failure      400  {object}  model.StandardResponse
-// @Failure      404  {string}  "404 page not found"
+// @Failure      404  {string} string "404 page not found"
 // @Failure      500  {object}  model.StandardResponse
 // @Router /v1/product/{id} [DELETE]
+// DeleteProduct handles HTTP requests for deleting products by ID.
+// It validates the ID and removes the product from the database.
 func (p *ProductAPI) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}

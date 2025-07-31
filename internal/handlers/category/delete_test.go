@@ -10,7 +10,6 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
 	sqlModel "github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
-
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -24,7 +23,7 @@ func TestCategoryAPI_DeleteCategory(t *testing.T) {
 	}
 
 	t.Run("Missing Category ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodDelete, "/categories/", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/categories/", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{})
@@ -34,7 +33,7 @@ func TestCategoryAPI_DeleteCategory(t *testing.T) {
 	})
 
 	t.Run("Invalid Category ID Format", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodDelete, "/categories/abc", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/categories/abc", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "abc"})
@@ -44,7 +43,7 @@ func TestCategoryAPI_DeleteCategory(t *testing.T) {
 	})
 
 	t.Run("Negative Category ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodDelete, "/categories/-1", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/categories/-1", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "-1"})
@@ -54,7 +53,7 @@ func TestCategoryAPI_DeleteCategory(t *testing.T) {
 	})
 
 	t.Run("GetCategoryByID Error", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodDelete, "/categories/1", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/categories/1", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "1"})
@@ -67,7 +66,7 @@ func TestCategoryAPI_DeleteCategory(t *testing.T) {
 	})
 
 	t.Run("Category Not Found", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodDelete, "/categories/1", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/categories/1", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "1"})
@@ -84,7 +83,7 @@ func TestCategoryAPI_DeleteCategory(t *testing.T) {
 	})
 
 	t.Run("Delete Category Error", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodDelete, "/categories/1", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/categories/1", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "1"})
@@ -98,7 +97,7 @@ func TestCategoryAPI_DeleteCategory(t *testing.T) {
 	})
 
 	t.Run("Successful Delete", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodDelete, "/categories/1", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/categories/1", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "1"})

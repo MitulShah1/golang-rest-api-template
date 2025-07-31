@@ -1,3 +1,5 @@
+// Package product provides HTTP handlers for product-related operations.
+// It includes endpoints for creating, reading, updating, and deleting products.
 package product
 
 import (
@@ -10,7 +12,7 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/package/validation"
 )
 
-// Product godoc
+// CreateProductDetail godoc
 // @Summary Create Product example
 // @Schemes
 // @Description Create Product example
@@ -21,9 +23,11 @@ import (
 // @Success 	 200  {object}  model.ProductDetailResponse
 // @Failure      401  {object}  model.StandardResponse
 // @Failure      400  {object}  model.StandardResponse
-// @Failure      404  {string}  "404 page not found"
+// @Failure      404  {string} string "404 page not found"
 // @Failure      500  {object}  model.StandardResponse
 // @Router /v1/create-product [post]
+// CreateProductDetail handles HTTP requests for creating new products.
+// It validates the request, creates the product, and returns the result.
 func (p *ProductAPI) CreateProductDetail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}

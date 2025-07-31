@@ -1,3 +1,5 @@
+// Package middleware provides HTTP middleware components for the application.
+// It includes authentication, CORS, logging, and telemetry middleware.
 package middleware
 
 import (
@@ -8,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/jaeger" //nolint:staticcheck // TODO: migrate to OTLP
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -26,21 +28,20 @@ type TelemetryConfig struct {
 }
 
 // InitTracer initializes the Jaeger tracer
-func (tm *TelemetryConfig) InitTracer() (*tracesdk.TracerProvider, error) {
-
+func (c *TelemetryConfig) InitTracer() (*tracesdk.TracerProvider, error) {
 	// Validate the configuration
-	if err := tm.validateConfig(); err != nil {
+	if err := c.validateConfig(); err != nil {
 		return nil, err
 	}
 
 	// Set the tracer
-	tm.Trace = otel.Tracer(tm.ServiceName)
+	c.Trace = otel.Tracer(c.ServiceName)
 
 	// Create the Jaeger exporter
 	exp, err := jaeger.New(
 		jaeger.WithAgentEndpoint(
-			jaeger.WithAgentHost(tm.Host),
-			jaeger.WithAgentPort(strconv.Itoa(tm.Port)),
+			jaeger.WithAgentHost(c.Host),
+			jaeger.WithAgentPort(strconv.Itoa(c.Port)),
 		),
 	)
 	if err != nil {
@@ -50,7 +51,7 @@ func (tm *TelemetryConfig) InitTracer() (*tracesdk.TracerProvider, error) {
 		tracesdk.WithBatcher(exp),
 		tracesdk.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(tm.ServiceName),
+			semconv.ServiceNameKey.String(c.ServiceName),
 		)),
 	)
 
@@ -59,21 +60,9 @@ func (tm *TelemetryConfig) InitTracer() (*tracesdk.TracerProvider, error) {
 	return provider, nil
 }
 
-// validateConfig validates the configuration
-func (tm *TelemetryConfig) validateConfig() error {
-	if tm.Host == "" {
-		return errors.New("host is required")
-	}
-	if tm.Port <= 0 {
-		return errors.New("invalid port")
-	}
-	return nil
-}
-
 // OpenTelemetryMiddleware is a middleware for tracing HTTP requests
 func (c *TelemetryConfig) OpenTelemetryMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		delegate := &responseWriterDelegator{
 			ResponseWriter: w,
 			status:         http.StatusOK, // Initialize with default status
@@ -111,6 +100,16 @@ func (c *TelemetryConfig) OpenTelemetryMiddleware(next http.Handler) http.Handle
 		next.ServeHTTP(delegate, r.WithContext(ctx))
 
 		span.SetAttributes(attribute.Int("http.status", delegate.status))
-
 	})
+}
+
+// validateConfig validates the configuration
+func (c *TelemetryConfig) validateConfig() error {
+	if c.Host == "" {
+		return errors.New("host is required")
+	}
+	if c.Port <= 0 {
+		return errors.New("invalid port")
+	}
+	return nil
 }

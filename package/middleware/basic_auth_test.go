@@ -69,7 +69,7 @@ func TestAuthMiddleware(t *testing.T) {
 			})
 
 			handler := AuthMiddleware(nextHandler)
-			req := httptest.NewRequest("GET", "/", nil)
+			req := httptest.NewRequest("GET", "/", http.NoBody)
 			if tt.authHeader != "" {
 				req.Header.Set("Authorization", tt.authHeader)
 			}

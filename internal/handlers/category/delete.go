@@ -1,3 +1,5 @@
+// Package category provides HTTP handlers for category-related operations.
+// It includes endpoints for creating, reading, updating, and deleting categories.
 package category
 
 import (
@@ -6,11 +8,10 @@ import (
 
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/response"
-
 	"github.com/gorilla/mux"
 )
 
-// Category godoc
+// DeleteCategory godoc
 // @Summary Delete Category example
 // @Schemes
 // @Description Delete Category example
@@ -21,9 +22,11 @@ import (
 // @Success 	 200  {object}  model.StandardResponse
 // @Failure      401  {object}  model.StandardResponse
 // @Failure      400  {object}  model.StandardResponse
-// @Failure      404  {string}  "404 page not found"
+// @Failure      404  {string} string "404 page not found"
 // @Failure      500  {object}  model.StandardResponse
 // @Router /v1/category/{id} [DELETE]
+// DeleteCategory handles HTTP requests for deleting categories by ID.
+// It validates the ID and removes the category from the database.
 func (c *CategoryAPI) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}

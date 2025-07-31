@@ -5,11 +5,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
 	sqlModel "github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/services/category/mocks"
+	"github.com/stretchr/testify/assert"
 )
 
 var mockRepo = new(mocks.CategoryServiceInterface)
@@ -65,6 +64,7 @@ func TestCategoryService_CreateCategory(t *testing.T) {
 		mockRepo.AssertExpectations(t)
 	})
 }
+
 func TestCategoryService_GetCategoryByID(t *testing.T) {
 	ctx := context.Background()
 
@@ -119,6 +119,7 @@ func TestCategoryService_GetCategoryByID(t *testing.T) {
 		mockRepo.AssertExpectations(t)
 	})
 }
+
 func TestCategoryService_DeleteCategory(t *testing.T) {
 	ctx := context.Background()
 
@@ -171,6 +172,7 @@ func TestCategoryService_DeleteCategory(t *testing.T) {
 		mockRepo.AssertExpectations(t)
 	})
 }
+
 func TestCategoryService_UpdateCategory(t *testing.T) {
 	ctx := context.Background()
 

@@ -1,26 +1,31 @@
+// Package repository provides data access layer for the application.
+// It includes database operations for categories, products, and other entities.
 package repository
 
 import (
 	"context"
 	"database/sql"
-
-	"github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
+	"errors"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
 )
 
-const CATEGORY_TABLE_NAME = "categories"
+var ErrCategoryNotFound = errors.New("category not found")
+
+const CategoryTableName = "categories"
 
 type CategoryRepository interface {
-	CreateCategory(ctx context.Context, category model.Category) (int64, error)
+	CreateCategory(ctx context.Context, category *model.Category) (int64, error)
 	GetCategoryByID(ctx context.Context, id int) (*model.Category, error)
-	UpdateCategory(ctx context.Context, id int, category model.Category) error
+	UpdateCategory(ctx context.Context, id int, category *model.Category) error
 	DeleteCategory(ctx context.Context, id int) error
 }
 
-// Create Category
-func (r *NewRepository) CreateCategory(ctx context.Context, category model.Category) (int64, error) {
-	query, args, err := squirrel.Insert(CATEGORY_TABLE_NAME).
+// CreateCategory creates a new category in the database.
+// It returns the ID of the created category or an error.
+func (r *NewRepository) CreateCategory(ctx context.Context, category *model.Category) (int64, error) {
+	query, args, err := squirrel.Insert(CategoryTableName).
 		Columns("name", "parent_id", "description").
 		Values(category.Name, category.ParentID, category.Description).
 		ToSql()
@@ -36,9 +41,10 @@ func (r *NewRepository) CreateCategory(ctx context.Context, category model.Categ
 	return result.LastInsertId()
 }
 
-// Get Category By ID
+// GetCategoryByID retrieves a category by its ID from the database.
+// It returns the category or an error if not found.
 func (r *NewRepository) GetCategoryByID(ctx context.Context, id int) (*model.Category, error) {
-	query, args, err := squirrel.Select("*").From(CATEGORY_TABLE_NAME).Where(squirrel.Eq{"id": id}).ToSql()
+	query, args, err := squirrel.Select("*").From(CategoryTableName).Where(squirrel.Eq{"id": id}).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +54,7 @@ func (r *NewRepository) GetCategoryByID(ctx context.Context, id int) (*model.Cat
 	err = row.Scan(&category.ID, &category.Name, &category.ParentID, &category.Description, &category.CreatedAt, &category.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			return nil, ErrCategoryNotFound
 		}
 		return nil, err
 	}
@@ -56,9 +62,10 @@ func (r *NewRepository) GetCategoryByID(ctx context.Context, id int) (*model.Cat
 	return &category, nil
 }
 
-// Update Category
-func (r *NewRepository) UpdateCategory(ctx context.Context, id int, category model.Category) error {
-	query, args, err := squirrel.Update(CATEGORY_TABLE_NAME).
+// UpdateCategory updates an existing category in the database.
+// It returns an error if the update fails.
+func (r *NewRepository) UpdateCategory(ctx context.Context, id int, category *model.Category) error {
+	query, args, err := squirrel.Update(CategoryTableName).
 		Set("name", category.Name).
 		Set("parent_id", category.ParentID).
 		Set("description", category.Description).
@@ -72,9 +79,10 @@ func (r *NewRepository) UpdateCategory(ctx context.Context, id int, category mod
 	return err
 }
 
-// Delete Category
+// DeleteCategory removes a category from the database by its ID.
+// It returns an error if the deletion fails.
 func (r *NewRepository) DeleteCategory(ctx context.Context, id int) error {
-	query, args, err := squirrel.Delete(CATEGORY_TABLE_NAME).Where(squirrel.Eq{"id": id}).ToSql()
+	query, args, err := squirrel.Delete(CategoryTableName).Where(squirrel.Eq{"id": id}).ToSql()
 	if err != nil {
 		return err
 	}

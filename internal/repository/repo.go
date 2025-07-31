@@ -1,3 +1,5 @@
+// Package repository provides data access layer for the application.
+// It includes database operations for categories, products, and other entities.
 package repository
 
 import "github.com/MitulShah1/golang-rest-api-template/package/database"

@@ -13,7 +13,6 @@ import (
 )
 
 func TestNewPrometheusMiddleware(t *testing.T) {
-
 	t.Skip("Skipping testNewPrometheusMiddleware")
 
 	tests := []struct {
@@ -106,12 +105,12 @@ func TestMiddlewareRequestCounting(t *testing.T) {
 	router := mux.NewRouter()
 	router.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("success"))
+		_, _ = w.Write([]byte("success"))
 	}).Methods("GET")
 
 	router.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("bad request"))
+		_, _ = w.Write([]byte("bad request"))
 	}).Methods("POST")
 
 	// Wrap the router with our middleware
@@ -128,7 +127,7 @@ func TestMiddlewareRequestCounting(t *testing.T) {
 	resp.Body.Close()
 
 	// Make a request to /error
-	req, err := http.NewRequest("POST", server.URL+"/error", nil)
+	req, err := http.NewRequest("POST", server.URL+"/error", http.NoBody)
 	require.NoError(t, err)
 
 	resp, err = http.DefaultClient.Do(req)
@@ -277,7 +276,7 @@ func TestResponseWriterDelegator(t *testing.T) {
 			name: "Explicit write header",
 			executeFunc: func(w http.ResponseWriter) {
 				w.WriteHeader(http.StatusCreated)
-				w.Write([]byte("created"))
+				_, _ = w.Write([]byte("created"))
 			},
 			expectedStatus: http.StatusCreated,
 			expectedOutput: "created",
@@ -285,7 +284,7 @@ func TestResponseWriterDelegator(t *testing.T) {
 		{
 			name: "Implicit header with write",
 			executeFunc: func(w http.ResponseWriter) {
-				w.Write([]byte("success"))
+				_, _ = w.Write([]byte("success"))
 			},
 			expectedStatus: http.StatusOK,
 			expectedOutput: "success",
@@ -293,8 +292,8 @@ func TestResponseWriterDelegator(t *testing.T) {
 		{
 			name: "Multiple writes",
 			executeFunc: func(w http.ResponseWriter) {
-				w.Write([]byte("part1"))
-				w.Write([]byte("part2"))
+				_, _ = w.Write([]byte("part1"))
+				_, _ = w.Write([]byte("part2"))
 			},
 			expectedStatus: http.StatusOK,
 			expectedOutput: "part1part2",

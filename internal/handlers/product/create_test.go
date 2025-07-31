@@ -12,7 +12,6 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/services/product/mocks"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +34,7 @@ func TestProductAPI_CreateProductDetail(t *testing.T) {
 	})
 
 	t.Run("Empty Request Body", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/products", nil)
+		req := httptest.NewRequest(http.MethodPost, "/products", http.NoBody)
 		w := httptest.NewRecorder()
 
 		api.CreateProductDetail(w, req)

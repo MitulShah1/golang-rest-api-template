@@ -60,7 +60,7 @@ func TestCorsMiddleware(t *testing.T) {
 			})
 
 			handler := CorsMiddleware(nextHandler)
-			req := httptest.NewRequest(tt.method, "/", nil)
+			req := httptest.NewRequest(tt.method, "/", http.NoBody)
 			rr := httptest.NewRecorder()
 
 			handler.ServeHTTP(rr, req)

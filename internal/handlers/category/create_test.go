@@ -12,7 +12,6 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/services/category/mocks"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,29 +41,6 @@ func TestCategoryAPI_CreateCategoryDetail(t *testing.T) {
 		mockCategoryService.AssertExpectations(t)
 	})
 
-	t.Run("Marshal Response Error", func(t *testing.T) {
-		validCategory := model.CreateCategoryRequest{
-			Name:        "Test Category",
-			Description: "Test Description",
-		}
-		body, _ := json.Marshal(validCategory)
-		req := httptest.NewRequest(http.MethodPost, "/categories", bytes.NewReader(body))
-		w := httptest.NewRecorder()
-
-		mockCategoryService.On("CreateCategory", context.Background(), validCategory).Return(int64(1), nil).Once()
-
-		api.CreateCategoryDetail(w, req)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-		mockCategoryService.AssertExpectations(t)
-
-		var response model.StandardResponse
-		err := json.NewDecoder(w.Body).Decode(&response)
-		assert.NoError(t, err)
-		assert.True(t, response.IsSuccess)
-		assert.NotNil(t, response.Data)
-	})
-
 	t.Run("Successful Category Creation", func(t *testing.T) {
 		validCategory := model.CreateCategoryRequest{
 			Name:        "Test Category",
@@ -86,9 +62,9 @@ func TestCategoryAPI_CreateCategoryDetail(t *testing.T) {
 		assert.NoError(t, err)
 		assert.True(t, response.IsSuccess)
 
-		data, ok := response.Data.(map[string]interface{})
+		data, ok := response.Data.(map[string]any)
 		assert.True(t, ok)
-		assert.Equal(t, float64(1), data["category_id"])
+		assert.Equal(t, float64(1), data["categoryId"])
 	})
 
 	t.Run("Invalid Request Body", func(t *testing.T) {
@@ -101,7 +77,7 @@ func TestCategoryAPI_CreateCategoryDetail(t *testing.T) {
 	})
 
 	t.Run("Empty Request Body", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/categories", nil)
+		req := httptest.NewRequest(http.MethodPost, "/categories", http.NoBody)
 		w := httptest.NewRecorder()
 
 		api.CreateCategoryDetail(w, req)

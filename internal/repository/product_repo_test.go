@@ -6,12 +6,10 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
 	"github.com/MitulShah1/golang-rest-api-template/package/database"
-
 	"github.com/MitulShah1/golang-rest-api-template/package/database/mocks"
-
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -50,8 +48,9 @@ func TestRepository_GetProductDetail(t *testing.T) {
 			WillReturnError(sql.ErrNoRows)
 
 		product, err := repo.GetProductDetail(ctx, 999)
-		assert.NoError(t, err)
+		assert.Error(t, err)
 		assert.Nil(t, product)
+		assert.Equal(t, ErrProductNotFound, err)
 	})
 
 	t.Run("Database Error", func(t *testing.T) {
@@ -64,6 +63,7 @@ func TestRepository_GetProductDetail(t *testing.T) {
 		assert.Nil(t, product)
 	})
 }
+
 func TestRepository_CreateProduct(t *testing.T) {
 	mockDB, mock, err := mocks.NewMockDBWithRegEx()
 	assert.NoError(t, err)

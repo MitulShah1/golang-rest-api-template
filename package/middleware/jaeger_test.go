@@ -89,7 +89,7 @@ func TestOpenTelemetryMiddleware(t *testing.T) {
 				Port:        6831,
 			},
 			setupRequest: func(r *http.Request) {
-				r.Header.Set("traceparent", "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01")
+				r.Header.Set("Traceparent", "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01")
 			},
 			expectedPath:   "/test",
 			expectedStatus: http.StatusOK,
@@ -103,7 +103,7 @@ func TestOpenTelemetryMiddleware(t *testing.T) {
 				Propagators: propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}),
 			},
 			setupRequest: func(r *http.Request) {
-				r.Header.Set("baggage", "user_id=123")
+				r.Header.Set("Baggage", "user_id=123")
 			},
 			expectedPath:   "/test",
 			expectedStatus: http.StatusOK,
@@ -153,7 +153,7 @@ func TestOpenTelemetryMiddleware(t *testing.T) {
 			tt.config.Trace = provider.Tracer("test")
 
 			handler := tt.config.OpenTelemetryMiddleware(router)
-			req := httptest.NewRequest("GET", "/test", nil)
+			req := httptest.NewRequest("GET", "/test", http.NoBody)
 			tt.setupRequest(req)
 
 			rr := httptest.NewRecorder()

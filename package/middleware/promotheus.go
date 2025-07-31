@@ -1,3 +1,5 @@
+// Package middleware provides HTTP middleware components for the application.
+// It includes authentication, CORS, logging, and telemetry middleware.
 package middleware
 
 import (
@@ -10,9 +12,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-var (
-	dflBuckets = []float64{0.3, 1.0, 2.5, 5.0}
-)
+var dflBuckets = []float64{0.3, 1.0, 2.5, 5.0}
 
 const (
 	httpRequestsCount    = "http_requests_total"
@@ -22,7 +22,6 @@ const (
 
 // Config specifies options how to create new PrometheusMiddleware.
 type Config struct {
-
 	// Namespace is components of the fully-qualified name of the Metric (created by joining Namespace,Subsystem and Name components with "_")
 	// Optional
 	Namespace string
@@ -53,7 +52,6 @@ type prometheusMiddleware struct {
 
 // NewPrometheusMiddleware creates a new PrometheusMiddleware instance
 func NewPrometheusMiddleware(cnfg Config) *prometheusMiddleware {
-
 	// Set default subsystem if not provided
 	if cnfg.Subsystem == "" {
 		cnfg.Subsystem = defaultSubsystem
@@ -94,17 +92,9 @@ func NewPrometheusMiddleware(cnfg Config) *prometheusMiddleware {
 	return m
 }
 
-// registerMetrics registers all the metrics on prometheus registerer.
-func (m *prometheusMiddleware) registerMetrics() {
-	m.reg.MustRegister(
-		m.request,
-		m.latency,
-	)
-}
-
 // Middleware implements the middleware function that will be called by the Gorilla Mux router
 // to handle the request.
-func (p *prometheusMiddleware) Middleware(next http.Handler) http.Handler {
+func (m *prometheusMiddleware) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		begin := time.Now()
 
@@ -117,13 +107,13 @@ func (p *prometheusMiddleware) Middleware(next http.Handler) http.Handler {
 
 		route := mux.CurrentRoute(r)
 
-		path := ""
+		var path string
 		if route != nil {
 			path, _ = route.GetPathTemplate()
 		} else {
 			// If no route was matched, it's a 404
 			path = r.URL.Path
-			if p.cfg.DoNotUseRequestPathFor404 {
+			if m.cfg.DoNotUseRequestPathFor404 {
 				path = "404"
 			}
 		}
@@ -132,9 +122,17 @@ func (p *prometheusMiddleware) Middleware(next http.Handler) http.Handler {
 		method := sanitizeMethod(r.Method)
 
 		// Execute counter and histogram operations directly instead of in goroutines
-		p.request.WithLabelValues(code, method, path).Inc()
-		p.latency.WithLabelValues(code, method, path).Observe(float64(time.Since(begin)) / float64(time.Second))
+		m.request.WithLabelValues(code, method, path).Inc()
+		m.latency.WithLabelValues(code, method, path).Observe(float64(time.Since(begin)) / float64(time.Second))
 	})
+}
+
+// registerMetrics registers all the metrics on prometheus registerer.
+func (m *prometheusMiddleware) registerMetrics() {
+	m.reg.MustRegister(
+		m.request,
+		m.latency,
+	)
 }
 
 type responseWriterDelegator struct {

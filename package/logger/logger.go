@@ -1,3 +1,5 @@
+// Package logger provides structured logging functionality for the application.
+// It includes log initialization, configuration, and various log levels.
 package logger
 
 import (
@@ -9,7 +11,7 @@ type Logger struct {
 	log *zap.Logger
 }
 
-// Init initializes the logger with given options
+// NewLogger initializes the logger with given options
 func NewLogger(opts LoggerOptions) *Logger {
 	logger := &Logger{}
 
@@ -60,27 +62,27 @@ func NewLogger(opts LoggerOptions) *Logger {
 }
 
 // Info logs an informational message with key-value pairs
-func (lg Logger) Info(msg string, keysAndValues ...interface{}) {
+func (lg Logger) Info(msg string, keysAndValues ...any) {
 	lg.log.Sugar().Infow(msg, keysAndValues...)
 }
 
 // Debug logs a debug message with key-value pairs
-func (lg Logger) Debug(msg string, keysAndValues ...interface{}) {
+func (lg Logger) Debug(msg string, keysAndValues ...any) {
 	lg.log.Sugar().Debugw(msg, keysAndValues...)
 }
 
 // Error logs an error message with key-value pairs
-func (lg Logger) Error(msg string, keysAndValues ...interface{}) {
+func (lg Logger) Error(msg string, keysAndValues ...any) {
 	lg.log.Sugar().Errorw(msg, keysAndValues...)
 }
 
 // Warn logs a warning message with key-value pairs
-func (lg Logger) Warn(msg string, keysAndValues ...interface{}) {
+func (lg Logger) Warn(msg string, keysAndValues ...any) {
 	lg.log.Sugar().Warnw(msg, keysAndValues...)
 }
 
 // Fatal logs a fatal message with key-value pairs
-func (lg Logger) Fatal(msg string, keysAndValues ...interface{}) {
+func (lg Logger) Fatal(msg string, keysAndValues ...any) {
 	lg.log.Sugar().Fatalw(msg, keysAndValues...)
 }
 

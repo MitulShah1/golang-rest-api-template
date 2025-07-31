@@ -9,7 +9,6 @@ import (
 
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
-
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -23,7 +22,7 @@ func TestCategoryAPI_UpdateCategory(t *testing.T) {
 	}
 
 	t.Run("Empty Category ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPut, "/categories/", nil)
+		req := httptest.NewRequest(http.MethodPut, "/categories/", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{})
@@ -33,7 +32,7 @@ func TestCategoryAPI_UpdateCategory(t *testing.T) {
 	})
 
 	t.Run("Invalid Category ID Format", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPut, "/categories/abc", nil)
+		req := httptest.NewRequest(http.MethodPut, "/categories/abc", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "abc"})
@@ -43,7 +42,7 @@ func TestCategoryAPI_UpdateCategory(t *testing.T) {
 	})
 
 	t.Run("Zero Category ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPut, "/categories/0", nil)
+		req := httptest.NewRequest(http.MethodPut, "/categories/0", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "0"})

@@ -1,3 +1,6 @@
+// Package config provides configuration management for the application.
+// It handles loading environment variables, database configuration,
+// server settings, and telemetry configuration.
 package config
 
 import (
@@ -17,7 +20,8 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 )
 
-// Config holds application configuration
+// Service holds application configuration and manages the application lifecycle.
+// It includes database, server, and telemetry configuration.
 type Service struct {
 	Name         string
 	Logger       *logger.Logger
@@ -57,17 +61,16 @@ func NewService() *Service {
 // initializing the logger, database connection, and server. It returns an error if any
 // of the initialization steps fail.
 func (cnf *Service) Init() (err error) {
-
-	//initiale logger
+	// initialize logger
 	cnf.Logger = logger.NewLogger(logger.DefaultOptions())
 
-	//Load Env variables
+	// Load environment variables
 	if err := cnf.LoadConfig(); err != nil {
 		return err
 	}
 
-	//initiale database
-	cnf.db, err = database.NewDatabase(database.DBConfig{
+	// initialize database
+	cnf.db, err = database.NewDatabase(&database.DBConfig{
 		Host:     cnf.dbEnv.Host,
 		Port:     cnf.dbEnv.Port,
 		User:     cnf.dbEnv.User,
@@ -95,9 +98,9 @@ func (cnf *Service) Init() (err error) {
 
 	cnf.Logger.Info("Tracer initialized")
 
-	//initiale server
+	// initialize server
 	serverAddr := cnf.srvConfg.Address + ":" + cnf.srvConfg.Port
-	if cnf.Server, err = handlers.NewServer(serverAddr, cnf.Logger, cnf.db, tmCnfg); err != nil {
+	if cnf.Server, err = handlers.NewServer(serverAddr, cnf.Logger, cnf.db, &tmCnfg); err != nil {
 		return err
 	}
 
@@ -108,7 +111,6 @@ func (cnf *Service) Init() (err error) {
 // It runs the server in a goroutine and waits for a termination signal (SIGINT or SIGTERM).
 // When a termination signal is received, it gracefully shuts down the server.
 func (cnf *Service) Run() error {
-
 	// Channel to listen for termination signals
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
@@ -144,7 +146,7 @@ func (cnf *Service) Run() error {
 }
 
 func (cnf *Service) LoadConfig() error {
-	//loads environment variables from .env file
+	// loads environment variables from .env file
 	if err := godotenv.Load(); err != nil {
 		cnf.Logger.Warn("no .env file found, using system environment variables")
 	}
@@ -157,13 +159,13 @@ func (cnf *Service) LoadConfig() error {
 		Name:     getEnv("DB_NAME", "mydatabase"),
 	}
 
-	//Server config
+	// Server config
 	cnf.srvConfg = ServerConf{
 		Address: getEnv("SERVER_ADDR", ""),
 		Port:    getEnv("SERVER_PORT", "8080"),
 	}
 
-	//Jaeger config
+	// Jaeger config
 	cnf.jaegerConfig = JaegerConfig{
 		AgentHost: getEnv("JAEGER_AGENT_HOST", "localhost"),
 		AgentPort: getEnv("JAEGER_AGENT_PORT", "6831"),

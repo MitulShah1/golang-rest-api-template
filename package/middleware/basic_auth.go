@@ -1,3 +1,5 @@
+// Package middleware provides HTTP middleware components for the application.
+// It includes authentication, CORS, logging, and telemetry middleware.
 package middleware
 
 import (
@@ -12,7 +14,6 @@ import (
 // AuthMiddleware is a simple Basic Authentication middleware
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			sendResponse(w, http.StatusUnauthorized, "Unauthorized")

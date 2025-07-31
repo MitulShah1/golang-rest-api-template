@@ -1,3 +1,5 @@
+// Package category provides HTTP handlers for category-related operations.
+// It includes endpoints for creating, reading, updating, and deleting categories.
 package category
 
 import (
@@ -7,43 +9,39 @@ import (
 
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/response"
-
 	"github.com/gorilla/mux"
 )
 
-// Category godoc
-// @Summary Get Category details example
-// @Schemes
-// @Description Get Category details example
+// GetCategoryByID godoc
+// @Summary Get category by ID
+// @Description Get category details by ID
 // @Tags Category
 // @Accept json
 // @Produce json
 // @Param id path int true "Category ID"
-// @Success 	 200  {object}  model.CategoryByIDResponse
-// @Failure      401  {object}  model.StandardResponse
-// @Failure      400  {object}  model.StandardResponse
-// @Failure      404  {string}  "404 page not found"
-// @Failure      500  {object}  model.StandardResponse
-// @Router /v1/category/{id} [get]
-func (p *CategoryAPI) GetCategoryById(w http.ResponseWriter, r *http.Request) {
+// @Success 200 {object} model.CategoryByIDResponse
+// @Failure 400 {object} model.StandardResponse
+// @Failure 404 {object} model.StandardResponse
+// @Router /category/{id} [get]
+func (c *CategoryAPI) GetCategoryByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}
 
 	categoryID := mux.Vars(r)["id"]
 	if categoryID == "" {
-		p.sendErrorResponse(w, "Category ID is required", http.StatusBadRequest)
+		c.sendErrorResponse(w, "Category ID is required", http.StatusBadRequest)
 		return
 	}
 
 	cid, err := strconv.Atoi(categoryID)
 	if err != nil || cid <= 0 {
-		p.sendErrorResponse(w, "Invalid category ID", http.StatusBadRequest)
+		c.sendErrorResponse(w, "Invalid category ID", http.StatusBadRequest)
 		return
 	}
 
-	category, err := p.catSrvc.GetCategoryByID(ctx, cid)
+	category, err := c.catSrvc.GetCategoryByID(ctx, cid)
 	if err != nil {
-		p.logger.Error("error while fetching category details", err, "category_id", cid)
+		c.logger.Error("error while fetching category details", err, "category_id", cid)
 		response.SendResponseRaw(w, http.StatusInternalServerError, nil)
 		return
 	}
@@ -56,7 +54,7 @@ func (p *CategoryAPI) GetCategoryById(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := json.Marshal(res)
 	if err != nil {
-		p.logger.Error("error while marshalling response", err)
+		c.logger.Error("error while marshalling response", err)
 		response.SendResponseRaw(w, http.StatusInternalServerError, nil)
 		return
 	}

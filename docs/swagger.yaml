@@ -17,7 +17,7 @@ definitions:
         type: integer
       name:
         type: string
-      parent_id:
+      parentId:
         type: integer
     type: object
   github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CreateCategoryRequest:
@@ -26,18 +26,18 @@ definitions:
         type: string
       name:
         type: string
-      parent_id:
+      parentId:
         type: integer
     required:
     - description
     - name
-    - parent_id
+    - parentId
     type: object
   github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CreateCategoryResponse:
     properties:
       data:
         properties:
-          category_id:
+          categoryId:
             type: integer
         type: object
       message:
@@ -59,16 +59,16 @@ definitions:
         type: string
       name:
         type: string
-      parent_id:
+      parentId:
         type: integer
     required:
     - description
     - name
-    - parent_id
+    - parentId
     type: object
   github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.CreateProductRequest:
     properties:
-      category_id:
+      categoryId:
         type: integer
       description:
         type: string
@@ -79,7 +79,7 @@ definitions:
       stock:
         type: integer
     required:
-    - category_id
+    - categoryId
     - description
     - name
     - price
@@ -87,7 +87,7 @@ definitions:
     type: object
   github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse:
     properties:
-      category_id:
+      categoryId:
         type: integer
       description:
         type: string
@@ -110,7 +110,7 @@ definitions:
     type: object
   github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.UpdateProductRequest:
     properties:
-      category_id:
+      categoryId:
         type: integer
       description:
         type: string
@@ -122,7 +122,7 @@ definitions:
       stock:
         type: integer
     required:
-    - category_id
+    - categoryId
     - description
     - name
     - price
@@ -145,7 +145,7 @@ info:
   title: REST API Template Example
   version: "1.0"
 paths:
-  /health-check:
+  /api/health-check:
     get:
       consumes:
       - application/json
@@ -160,6 +160,35 @@ paths:
       summary: ping example
       tags:
       - HealthCheck
+  /category/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get category details by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CategoryByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
+      summary: Get category by ID
+      tags:
+      - Category
   /v1/category/{id}:
     delete:
       consumes:
@@ -195,42 +224,6 @@ paths:
           schema:
             $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
       summary: Delete Category example
-      tags:
-      - Category
-    get:
-      consumes:
-      - application/json
-      description: Get Category details example
-      parameters:
-      - description: Category ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.CategoryByIDResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
-        "404":
-          description: 404 page not found
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_category_model.StandardResponse'
-      summary: Get Category details example
       tags:
       - Category
     put:
@@ -391,7 +384,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get Product details example
+      description: Get Product details by ID
       parameters:
       - description: Product ID
         in: path
@@ -404,7 +397,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.ProductDetailResponse'
+            $ref: '#/definitions/github_com_MitulShah1_golang-rest-api-template_internal_handlers_product_model.StandardResponse'
         "400":
           description: Bad Request
           schema:
@@ -424,10 +417,11 @@ paths:
       summary: Get Product details example
       tags:
       - Product
+  /v1/update-product/{id}:
     put:
       consumes:
       - application/json
-      description: Update Product example
+      description: Update Product by ID
       parameters:
       - description: Product ID
         in: path

@@ -4,9 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/MitulShah1/golang-rest-api-template/package/database/mocks"
-
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/MitulShah1/golang-rest-api-template/package/database/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -101,7 +100,7 @@ func TestGetDSN(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dsn := getDSN(tt.config)
+			dsn := getDSN(&tt.config)
 			assert.Equal(t, tt.expected, dsn)
 		})
 	}

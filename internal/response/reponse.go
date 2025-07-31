@@ -1,3 +1,5 @@
+// Package response provides HTTP response utilities for the application.
+// It includes standardized response formatting and error handling.
 package response
 
 import (
