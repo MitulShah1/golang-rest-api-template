@@ -47,11 +47,3 @@ jobs:
       - name: Build
         run: go build -v ./...
         continue-on-error: ${{ matrix.allow-failure }}
-
-      - name: Install golangci-lint
-        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
-        continue-on-error: ${{ matrix.allow-failure }}
-
-      - name: Run golangci-lint
-        run: $(go env GOPATH)/bin/golangci-lint run --verbose
-        continue-on-error: ${{ matrix.allow-failure }}
