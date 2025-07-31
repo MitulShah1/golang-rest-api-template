@@ -1,3 +1,5 @@
+// Package mocks provides mock implementations for testing.
+// It includes mock database connections and query builders for unit tests.
 package mocks
 
 import (

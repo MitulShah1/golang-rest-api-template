@@ -7,11 +7,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
 	"github.com/MitulShah1/golang-rest-api-template/package/database"
 	"github.com/MitulShah1/golang-rest-api-template/package/database/mocks"
-
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -36,7 +35,7 @@ func TestRepository_CreateCategory(t *testing.T) {
 			WithArgs(category.Name, category.ParentID, category.Description).
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
-		id, err := repo.CreateCategory(ctx, category)
+		id, err := repo.CreateCategory(ctx, &category)
 		assert.NoError(t, err)
 		assert.Equal(t, int64(1), id)
 	})
@@ -52,7 +51,7 @@ func TestRepository_CreateCategory(t *testing.T) {
 			WithArgs(category.Name, category.ParentID, category.Description).
 			WillReturnResult(sqlmock.NewResult(2, 1))
 
-		id, err := repo.CreateCategory(ctx, category)
+		id, err := repo.CreateCategory(ctx, &category)
 		assert.NoError(t, err)
 		assert.Equal(t, int64(2), id)
 	})
@@ -67,7 +66,7 @@ func TestRepository_CreateCategory(t *testing.T) {
 			WithArgs(category.Name, category.ParentID, category.Description).
 			WillReturnError(errors.New("database error"))
 
-		id, err := repo.CreateCategory(ctx, category)
+		id, err := repo.CreateCategory(ctx, &category)
 		assert.Error(t, err)
 		assert.Equal(t, int64(0), id)
 	})
@@ -82,7 +81,7 @@ func TestRepository_CreateCategory(t *testing.T) {
 			WithArgs(category.Name, category.ParentID, category.Description).
 			WillReturnError(errors.New("Error 1062: Duplicate entry"))
 
-		id, err := repo.CreateCategory(ctx, category)
+		id, err := repo.CreateCategory(ctx, &category)
 		assert.Error(t, err)
 		assert.Equal(t, int64(0), id)
 	})
@@ -99,11 +98,12 @@ func TestRepository_CreateCategory(t *testing.T) {
 			WithArgs(category.Name, category.ParentID, category.Description).
 			WillReturnError(errors.New("foreign key constraint fails"))
 
-		id, err := repo.CreateCategory(ctx, category)
+		id, err := repo.CreateCategory(ctx, &category)
 		assert.Error(t, err)
 		assert.Equal(t, int64(0), id)
 	})
 }
+
 func TestRepository_GetCategoryByID(t *testing.T) {
 	mockDB, mock, err := mocks.NewMockDBWithRegEx()
 	assert.NoError(t, err)
@@ -143,8 +143,9 @@ func TestRepository_GetCategoryByID(t *testing.T) {
 			WillReturnError(sql.ErrNoRows)
 
 		category, err := repo.GetCategoryByID(ctx, 999)
-		assert.NoError(t, err)
+		assert.Error(t, err)
 		assert.Nil(t, category)
+		assert.Equal(t, ErrCategoryNotFound, err)
 	})
 
 	t.Run("Database Error", func(t *testing.T) {
@@ -184,6 +185,7 @@ func TestRepository_GetCategoryByID(t *testing.T) {
 		assert.Nil(t, category)
 	})
 }
+
 func TestRepository_UpdateCategory(t *testing.T) {
 	mockDB, mock, err := mocks.NewMockDBWithRegEx()
 	assert.NoError(t, err)
@@ -205,69 +207,71 @@ func TestRepository_UpdateCategory(t *testing.T) {
 			WithArgs(category.Name, category.ParentID, category.Description, 1).
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
-		err := repo.UpdateCategory(ctx, 1, category)
+		err := repo.UpdateCategory(ctx, 1, &category)
 		assert.NoError(t, err)
 	})
 
-	t.Run("Update With Null Parent ID", func(t *testing.T) {
+	t.Run("Success With Parent", func(t *testing.T) {
+		parentID := 1
 		category := model.Category{
-			Name:        "Updated Root Category",
-			ParentID:    nil,
-			Description: "Updated Root Description",
+			Name:        "Updated Category",
+			ParentID:    &parentID,
+			Description: "Updated Description",
 		}
 
-		mock.ExpectExec("UPDATE categories").
+		mock.ExpectExec("UPDATE categories SET").
 			WithArgs(category.Name, category.ParentID, category.Description, 1).
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
-		err := repo.UpdateCategory(ctx, 1, category)
+		err := repo.UpdateCategory(ctx, 1, &category)
 		assert.NoError(t, err)
 	})
 
-	t.Run("No Rows Affected", func(t *testing.T) {
+	t.Run("Category Not Found", func(t *testing.T) {
 		category := model.Category{
 			Name:        "Non-existent Category",
-			Description: "Description",
+			Description: "Non-existent Description",
 		}
 
-		mock.ExpectExec("UPDATE categories").
+		mock.ExpectExec("UPDATE categories SET").
 			WithArgs(category.Name, category.ParentID, category.Description, 999).
 			WillReturnResult(sqlmock.NewResult(0, 0))
 
-		err := repo.UpdateCategory(ctx, 999, category)
+		err := repo.UpdateCategory(ctx, 999, &category)
 		assert.NoError(t, err)
 	})
 
-	t.Run("Foreign Key Violation", func(t *testing.T) {
+	t.Run("Database Error", func(t *testing.T) {
+		category := model.Category{
+			Name:        "Error Category",
+			Description: "Error Description",
+		}
+
+		mock.ExpectExec("UPDATE categories SET").
+			WithArgs(category.Name, category.ParentID, category.Description, 1).
+			WillReturnError(errors.New("database error"))
+
+		err := repo.UpdateCategory(ctx, 1, &category)
+		assert.Error(t, err)
+	})
+
+	t.Run("Invalid Parent ID", func(t *testing.T) {
 		parentID := 999
 		category := model.Category{
 			Name:        "Invalid Parent Category",
 			ParentID:    &parentID,
-			Description: "Description",
+			Description: "Invalid Parent Description",
 		}
 
-		mock.ExpectExec("UPDATE categories").
+		mock.ExpectExec("UPDATE categories SET").
 			WithArgs(category.Name, category.ParentID, category.Description, 1).
 			WillReturnError(errors.New("foreign key constraint fails"))
 
-		err := repo.UpdateCategory(ctx, 1, category)
-		assert.Error(t, err)
-	})
-
-	t.Run("Database Connection Error", func(t *testing.T) {
-		category := model.Category{
-			Name:        "Error Category",
-			Description: "Description",
-		}
-
-		mock.ExpectExec("UPDATE categories").
-			WithArgs(category.Name, category.ParentID, category.Description, 1).
-			WillReturnError(errors.New("connection refused"))
-
-		err := repo.UpdateCategory(ctx, 1, category)
+		err := repo.UpdateCategory(ctx, 1, &category)
 		assert.Error(t, err)
 	})
 }
+
 func TestRepository_DeleteCategory(t *testing.T) {
 	mockDB, mock, err := mocks.NewMockDBWithRegEx()
 	assert.NoError(t, err)

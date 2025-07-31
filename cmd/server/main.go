@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/MitulShah1/golang-rest-api-template/package/logger"
-
-	_ "github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
-
 	"github.com/MitulShah1/golang-rest-api-template/config"
+	_ "github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
+	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 )
 
 // @title           REST API Template Example
@@ -30,7 +28,6 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-
 	// Initialize the logger
 	log := logger.NewLogger(logger.DefaultOptions())
 
@@ -44,5 +41,4 @@ func main() {
 	if err := config.Run(); err != nil {
 		log.Fatal("error while run app", "error", err.Error())
 	}
-
 }

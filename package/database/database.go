@@ -1,8 +1,11 @@
+// Package database provides database connection and configuration utilities.
+// It includes database initialization, connection pooling, and query building.
 package database
 
 import (
 	"fmt"
 	"log"
+	"net"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -36,7 +39,7 @@ type Database struct {
 }
 
 // NewDatabase initializes a new database connection
-func NewDatabase(dbCnfg DBConfig) (*Database, error) {
+func NewDatabase(dbCnfg *DBConfig) (*Database, error) {
 	cfg := DBConfig{
 		Host:     dbCnfg.Host,
 		Port:     dbCnfg.Port,
@@ -50,7 +53,7 @@ func NewDatabase(dbCnfg DBConfig) (*Database, error) {
 		cfg.Driver = DriverName
 	}
 
-	dsn := getDSN(cfg)
+	dsn := getDSN(&cfg)
 	db, err := sqlx.Connect(cfg.Driver, dsn)
 	if err != nil {
 		return nil, err
@@ -80,14 +83,14 @@ func (d *Database) Close() {
 }
 
 // getDSN builds the Data Source Name based on the driver
-func getDSN(cfg DBConfig) string {
+func getDSN(cfg *DBConfig) string {
 	switch cfg.Driver {
 	case "postgres":
-		return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
-			cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DBName, cfg.SSLMode)
+		return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=%s",
+			cfg.User, cfg.Password, net.JoinHostPort(cfg.Host, cfg.Port), cfg.DBName, cfg.SSLMode)
 	case "mysql":
-		return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
-			cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DBName)
+		return fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true",
+			cfg.User, cfg.Password, net.JoinHostPort(cfg.Host, cfg.Port), cfg.DBName)
 	case "sqlite3":
 		return cfg.DBName // SQLite uses a simple file path as DSN
 	default:

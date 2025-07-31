@@ -1,7 +1,8 @@
+// Package validation provides data validation utilities for the application.
+// It includes struct validation, custom error messages, and validation rules.
 package validation
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -10,7 +11,7 @@ import (
 // Validator instance
 var validate = validator.New()
 
-// Custom error messages
+// CustomErrorMessages contains custom error messages for validation
 var CustomErrorMessages = map[string]string{
 	"required": "The field {{.Field}} is required",
 	"email":    "The field {{.Field}} must be a valid email",
@@ -23,12 +24,12 @@ type ValidationError struct {
 	Message string `json:"message"`
 }
 
-func ValidateStruct(s interface{}) []ValidationError {
+func ValidateStruct(s any) []ValidationError {
 	var validationErrors []ValidationError
 	err := validate.Struct(s)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			msg := fmt.Sprintf("Validation failed for field: %s", err.Field())
+			msg := "Validation failed for field: " + err.Field()
 
 			if customMsg, exists := CustomErrorMessages[err.Tag()]; exists {
 				msg = customMsg

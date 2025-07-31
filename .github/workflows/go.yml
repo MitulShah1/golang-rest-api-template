@@ -33,6 +33,12 @@ jobs:
 
     - name: Build
       run: go build -v ./...
+    
+    - name: Run golangci-lint (v2)
+      uses: golangci/golangci-lint-action@v8
+      with:
+        version: v2.1.0
+        args: --verbose  
 
     - name: Test
       run: go test -v ./...

@@ -1,3 +1,5 @@
+// Package model provides data structures for database entities.
+// It includes models for categories, products, and other database objects.
 package model
 
 import "time"

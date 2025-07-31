@@ -1,3 +1,5 @@
+// Package middleware provides HTTP middleware components for the application.
+// It includes authentication, CORS, logging, and telemetry middleware.
 package middleware
 
 import "net/http"

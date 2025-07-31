@@ -9,7 +9,7 @@ import (
 func TestValidateStruct(t *testing.T) {
 	tests := []struct {
 		name          string
-		input         interface{}
+		input         any
 		expectedErrs  int
 		expectedField string
 	}{

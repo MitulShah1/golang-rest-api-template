@@ -9,7 +9,6 @@ import (
 
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
-
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -23,11 +22,11 @@ func TestProductAPI_GetProductDetail(t *testing.T) {
 	}
 
 	t.Run("Successful Get With Data", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/products/1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/products/1", http.NoBody)
 		w := httptest.NewRecorder()
 
 		expectedProduct := &model.ProductDetailResponse{
-			Id:          1,
+			ID:          1,
 			Name:        "Test Product",
 			Description: "Test Description",
 			Price:       99.99,
@@ -40,8 +39,8 @@ func TestProductAPI_GetProductDetail(t *testing.T) {
 
 		api.GetProductDetail(w, req)
 
-		var data = map[string]interface{}{
-			"id":          expectedProduct.Id,
+		data := map[string]any{
+			"id":          expectedProduct.ID,
 			"name":        expectedProduct.Name,
 			"description": expectedProduct.Description,
 			"price":       expectedProduct.Price,
@@ -59,7 +58,7 @@ func TestProductAPI_GetProductDetail(t *testing.T) {
 	})
 
 	t.Run("Negative Product ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/products/-1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/products/-1", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "-1"})
@@ -69,7 +68,7 @@ func TestProductAPI_GetProductDetail(t *testing.T) {
 	})
 
 	t.Run("Service Returns Error With Custom Message", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/products/1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/products/1", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "1"})

@@ -1,3 +1,5 @@
+// Package logger provides structured logging functionality for the application.
+// It includes log initialization, configuration, and various log levels.
 package logger
 
 import "go.uber.org/zap/zapcore"

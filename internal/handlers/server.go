@@ -1,3 +1,5 @@
+// Package handlers provides HTTP server setup and routing functionality.
+// It includes server initialization, middleware configuration, and route registration.
 package handlers
 
 import (
@@ -5,6 +7,8 @@ import (
 	"net"
 	"net/http"
 
+	_ "github.com/MitulShah1/golang-rest-api-template/docs"
+	catApi "github.com/MitulShah1/golang-rest-api-template/internal/handlers/category"
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/health"
 	prodApi "github.com/MitulShah1/golang-rest-api-template/internal/handlers/product"
 	"github.com/MitulShah1/golang-rest-api-template/internal/repository"
@@ -13,12 +17,8 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/package/database"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 	"github.com/MitulShah1/golang-rest-api-template/package/middleware"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-
-	_ "github.com/MitulShah1/golang-rest-api-template/docs"
-	catApi "github.com/MitulShah1/golang-rest-api-template/internal/handlers/category"
-
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
@@ -28,8 +28,7 @@ type Server struct {
 	logger   *logger.Logger
 }
 
-func NewServer(address string, logger *logger.Logger, db *database.Database, tm middleware.TelemetryConfig) (*Server, error) {
-
+func NewServer(address string, logger *logger.Logger, db *database.Database, tm *middleware.TelemetryConfig) (*Server, error) {
 	// Create a new router
 	router := mux.NewRouter()
 
@@ -37,13 +36,13 @@ func NewServer(address string, logger *logger.Logger, db *database.Database, tm 
 	// Serve Swagger UI
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
-	// Promotheus metrics
-	promotheuseMiddleware := middleware.NewPrometheusMiddleware(middleware.Config{
+	// Prometheus metrics
+	prometheusMiddleware := middleware.NewPrometheusMiddleware(middleware.Config{
 		DoNotUseRequestPathFor404: true,
 	})
 
 	mw := func(handler http.Handler) http.Handler {
-		return promotheuseMiddleware.Middleware(
+		return prometheusMiddleware.Middleware(
 			tm.OpenTelemetryMiddleware(handler),
 		)
 	}
@@ -58,7 +57,7 @@ func NewServer(address string, logger *logger.Logger, db *database.Database, tm 
 	healthAPI := health.NewHealthAPI(logger)
 	healthAPI.RegisterHandlers(r)
 
-	//Create versioned subrouter (e.g., /v1)
+	// Create versioned subrouter (e.g., /v1)
 	apiV1 := r.PathPrefix("/v1").Subrouter()
 
 	// Register all middlewares
@@ -107,7 +106,7 @@ func NewServer(address string, logger *logger.Logger, db *database.Database, tm 
 	}, nil
 }
 
-// ServerUp starts the HTTP server and listens for incoming requests.
+// ListenAndServe starts the HTTP server and listens for incoming requests.
 // It returns an error if the server fails to start.
 func (srv *Server) ListenAndServe() error {
 	return srv.httpSrvr.Serve(srv.httpList)

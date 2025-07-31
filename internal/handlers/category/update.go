@@ -1,3 +1,5 @@
+// Package category provides HTTP handlers for category-related operations.
+// It includes endpoints for creating, reading, updating, and deleting categories.
 package category
 
 import (
@@ -9,11 +11,10 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/response"
 	"github.com/MitulShah1/golang-rest-api-template/package/validation"
-
 	"github.com/gorilla/mux"
 )
 
-// Category godoc
+// UpdateCategory godoc
 // @Summary Update Category example
 // @Schemes
 // @Description Update Category example
@@ -25,9 +26,11 @@ import (
 // @Success 	 200  {object}  model.StandardResponse
 // @Failure      401  {object}  model.StandardResponse
 // @Failure      400  {object}  model.StandardResponse
-// @Failure      404  {string}  "404 page not found"
+// @Failure      404  {string} string "404 page not found"
 // @Failure      500  {object}  model.StandardResponse
 // @Router /v1/category/{id} [put]
+// UpdateCategory handles HTTP requests for updating existing categories.
+// It validates the request and updates the category in the database.
 func (c *CategoryAPI) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}

@@ -5,10 +5,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/services/product/mocks"
+	"github.com/stretchr/testify/assert"
 )
 
 var mockService = new(mocks.ProductServiceInterface)
@@ -18,10 +17,12 @@ func TestProductService_GetProductDetail(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		expectedProduct := &model.ProductDetailResponse{
-			Id:          1,
+			ID:          1,
 			Name:        "Test Product",
 			Description: "Test Description",
 			Price:       99.99,
+			CategoryID:  1,
+			Stock:       10,
 		}
 
 		mockService.On("GetProductDetail", ctx, 1).Return(expectedProduct, nil)
@@ -110,7 +111,6 @@ func TestProductService_UpdateProduct(t *testing.T) {
 }
 
 func TestProductService_DeleteProduct(t *testing.T) {
-
 	ctx := context.Background()
 
 	t.Run("Success", func(t *testing.T) {

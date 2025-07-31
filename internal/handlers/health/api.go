@@ -1,3 +1,5 @@
+// Package health provides HTTP handlers for health check operations.
+// It includes endpoints for monitoring application health and status.
 package health
 
 import (
@@ -5,11 +7,11 @@ import (
 
 	"github.com/MitulShah1/golang-rest-api-template/internal/response"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
-
 	"github.com/gorilla/mux"
 )
 
-const HEALTH_CHECK_PATH = "/health-check"
+// HealthCheckPath is the path for health check endpoint
+const HealthCheckPath = "/health-check"
 
 type HealthAPI struct {
 	logger *logger.Logger
@@ -26,22 +28,19 @@ func NewHealthAPI(logger *logger.Logger) *HealthAPI {
 // endpoint is accessed, which can be used for health checks or liveness probes.
 
 func (api *HealthAPI) RegisterHandlers(router *mux.Router) {
-	router.HandleFunc(HEALTH_CHECK_PATH, api.HealthCheckApiHandler).Methods("GET")
+	router.HandleFunc(HealthCheckPath, api.HealthCheckAPIHandler).Methods("GET")
 }
 
-// HealthCheckApiHandler is an HTTP handler that responds with a 200 OK status
-// when the /health-check endpoint is accessed. This can be used for health
-// checks or liveness probes.
-
-// Healthcheck godoc
+// HealthCheckAPIHandler godoc
 // @Summary ping example
-// @Schemes
 // @Description do ping
 // @Tags HealthCheck
 // @Accept json
 // @Produce json
-// @Success 200 {string} ok
-// @Router /health-check [get]
-func (api *HealthAPI) HealthCheckApiHandler(w http.ResponseWriter, r *http.Request) {
+// @Success 200 {string} string "OK"
+// @Router /api/health-check [get]
+// HealthCheckAPIHandler handles HTTP requests for health check endpoints.
+// It returns a simple OK response to indicate the service is running.
+func (api *HealthAPI) HealthCheckAPIHandler(w http.ResponseWriter, r *http.Request) {
 	response.SendResponseRaw(w, http.StatusOK, []byte("OK"))
 }

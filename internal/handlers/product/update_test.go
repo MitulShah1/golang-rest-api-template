@@ -10,7 +10,6 @@ import (
 
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
-
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -24,7 +23,7 @@ func TestProductAPI_UpdateProductDetail(t *testing.T) {
 	}
 
 	t.Run("Missing Product ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPut, "/products/", nil)
+		req := httptest.NewRequest(http.MethodPut, "/products/", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{})
@@ -34,7 +33,7 @@ func TestProductAPI_UpdateProductDetail(t *testing.T) {
 	})
 
 	t.Run("Invalid Product ID Format", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPut, "/products/abc", nil)
+		req := httptest.NewRequest(http.MethodPut, "/products/abc", http.NoBody)
 		w := httptest.NewRecorder()
 
 		req = mux.SetURLVars(req, map[string]string{"id": "abc"})

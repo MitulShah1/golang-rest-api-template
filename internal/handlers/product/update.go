@@ -1,3 +1,5 @@
+// Package product provides HTTP handlers for product-related operations.
+// It includes endpoints for creating, reading, updating, and deleting products.
 package product
 
 import (
@@ -9,25 +11,25 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/response"
 	"github.com/MitulShah1/golang-rest-api-template/package/validation"
-
 	"github.com/gorilla/mux"
 )
 
-// Product godoc
+// UpdateProductDetail godoc
 // @Summary Update Product example
-// @Schemes
-// @Description Update Product example
+// @Description Update Product by ID
 // @Tags Product
 // @Accept json
 // @Produce json
 // @Param id path int true "Product ID"
 // @Param product body model.UpdateProductRequest true "Product"
-// @Success 	 200  {object}  model.StandardResponse
-// @Failure      401  {object}  model.StandardResponse
-// @Failure      400  {object}  model.StandardResponse
-// @Failure      404  {string}  "404 page not found"
-// @Failure      500  {object}  model.StandardResponse
-// @Router /v1/product/{id} [put]
+// @Success 200 {object} model.StandardResponse
+// @Failure 400 {object} model.StandardResponse
+// @Failure 401 {object} model.StandardResponse
+// @Failure 404 {string} string "404 page not found"
+// @Failure 500 {object} model.StandardResponse
+// @Router /v1/update-product/{id} [put]
+// UpdateProductDetail handles HTTP requests for updating existing products.
+// It validates the request and updates the product in the database.
 func (p *ProductAPI) UpdateProductDetail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}

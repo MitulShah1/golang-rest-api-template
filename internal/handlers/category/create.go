@@ -1,3 +1,5 @@
+// Package category provides HTTP handlers for category-related operations.
+// It includes endpoints for creating, reading, updating, and deleting categories.
 package category
 
 import (
@@ -10,7 +12,7 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/package/validation"
 )
 
-// Category godoc
+// CreateCategoryDetail godoc
 // @Summary Create Category example
 // @Schemes
 // @Description Create Category example
@@ -21,9 +23,11 @@ import (
 // @Success 	 200  {object}  model.CreateCategoryResponse
 // @Failure      401  {object}  model.StandardResponse
 // @Failure      400  {object}  model.StandardResponse
-// @Failure      404  {string}  "404 page not found"
+// @Failure      404  {string} string "404 page not found"
 // @Failure      500  {object}  model.StandardResponse
 // @Router /v1/create-category [post]
+// CreateCategoryDetail handles HTTP requests for creating new categories.
+// It validates the request, creates the category, and returns the result.
 func (c *CategoryAPI) CreateCategoryDetail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res := model.StandardResponse{}
@@ -53,7 +57,7 @@ func (c *CategoryAPI) CreateCategoryDetail(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Create Category
-	cateId, err := c.catSrvc.CreateCategory(ctx, req)
+	cateID, err := c.catSrvc.CreateCategory(ctx, req)
 	if err != nil {
 		c.logger.Error("error while creating category", err)
 		response.SendResponseRaw(w, http.StatusInternalServerError, nil)
@@ -63,9 +67,9 @@ func (c *CategoryAPI) CreateCategoryDetail(w http.ResponseWriter, r *http.Reques
 	// Send success response
 	res.IsSuccess = true
 	res.Data = struct {
-		CategoryID int64 `json:"category_id"`
+		CategoryID int64 `json:"categoryId"`
 	}{
-		CategoryID: cateId,
+		CategoryID: cateID,
 	}
 	resp, err := json.Marshal(res)
 	if err != nil {

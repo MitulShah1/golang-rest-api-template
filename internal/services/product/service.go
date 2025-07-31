@@ -1,13 +1,18 @@
+// Package product provides business logic for product operations.
+// It includes service layer functionality for product management.
 package product
 
 import (
 	"context"
+	"errors"
 
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/repository"
 	sqlModel "github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 )
+
+var ErrProductNotFound = errors.New("product not found")
 
 type ProductServiceInterface interface {
 	GetProductDetail(ctx context.Context, id int) (product *model.ProductDetailResponse, err error)
@@ -37,12 +42,12 @@ func (s *ProductService) GetProductDetail(ctx context.Context, id int) (product 
 
 	if prodDetail == nil {
 		s.logger.Warn("product not found", "product id", id)
-		return nil, nil
+		return nil, ErrProductNotFound
 	}
 
 	// Send the product details as the response
 	product = &model.ProductDetailResponse{
-		Id:          prodDetail.ID,
+		ID:          prodDetail.ID,
 		Name:        prodDetail.Name,
 		Description: prodDetail.Description,
 		Price:       prodDetail.Price,
@@ -52,8 +57,8 @@ func (s *ProductService) GetProductDetail(ctx context.Context, id int) (product 
 
 	return product, nil
 }
-func (s *ProductService) CreateProduct(ctx context.Context, product model.CreateProductRequest) (err error) {
 
+func (s *ProductService) CreateProduct(ctx context.Context, product model.CreateProductRequest) (err error) {
 	productd := &sqlModel.Product{
 		Name:        product.Name,
 		Description: product.Description,
@@ -71,7 +76,6 @@ func (s *ProductService) CreateProduct(ctx context.Context, product model.Create
 }
 
 func (s *ProductService) UpdateProduct(ctx context.Context, pid int, product model.UpdateProductRequest) (err error) {
-
 	productd := &sqlModel.Product{
 		Name:        product.Name,
 		Description: product.Description,
