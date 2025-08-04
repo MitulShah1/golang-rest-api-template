@@ -7,23 +7,23 @@
 
 ## 🚀 Template Repository
 
-This is a **template repository** for building REST APIs with Go. Click the "Use this template" button above to create your own repository based on this template.
+This is a **template repository** for building production-ready and easily extendible REST APIs using Go. Click the "Use this template" button above to create your own repository based on this template.
 
 ## Overview
 
-This template includes everything you need to build a REST API with Go - logging, middleware, database setup, testing, and deployment configs.
+This template follows best practices and includes a standardized project structure with all necessary components for building scalable microservices.
 
 ## Features
 
 - Structured logging
-- Middleware (auth, CORS, etc.)
-- Config management
-- API docs with Swagger
-- Docker setup
-- GitHub Actions CI/CD
+- Middleware support (authentication, etc.)
+- Configuration management
+- API documentation with Swagger
+- Docker support
+- CI/CD pipeline with GitHub Actions
 - Database migrations
-- Tests
-- Makefile for common tasks
+- End-to-end testing
+- Makefile for common operations
 
 The main ones are:
 
@@ -44,7 +44,6 @@ The main ones are:
 ## 🎯 Quick Start (Using Template)
 
 ### 1. Create Repository from Template
-
 Click the **"Use this template"** button at the top of this repository, or use GitHub CLI:
 
 ```bash
@@ -52,23 +51,19 @@ gh repo create my-go-api --template MitulShah1/golang-rest-api-template
 ```
 
 ### 2. Clone Your New Repository
-
 ```bash
 git clone https://github.com/YOUR_USERNAME/my-go-api.git
 cd my-go-api
 ```
 
 ### 3. Update Project Details
-
 After creating your repository, update these files:
-
 - `go.mod` - Update module name
 - `README.md` - Update project name and description
 - `.github/workflows/go.yml` - Update repository references if needed
 - `docker-compose.yml` - Update service names if needed
 
 ### 4. Start Development
-
 ```bash
 make help          # See all available commands
 make env           # Create .env file
@@ -115,7 +110,7 @@ golang-microservice-template/
 
 ### Prerequisites
 
-- Go 1.21+
+- Go 1.21 or higher
 - Docker and Docker Compose
 - Make
 
