@@ -135,28 +135,6 @@ func (m *prometheusMiddleware) registerMetrics() {
 	)
 }
 
-type responseWriterDelegator struct {
-	http.ResponseWriter
-	status      int
-	written     int64
-	wroteHeader bool
-}
-
-func (r *responseWriterDelegator) WriteHeader(code int) {
-	r.status = code
-	r.wroteHeader = true
-	r.ResponseWriter.WriteHeader(code)
-}
-
-func (r *responseWriterDelegator) Write(b []byte) (int, error) {
-	if !r.wroteHeader {
-		r.WriteHeader(http.StatusOK)
-	}
-	n, err := r.ResponseWriter.Write(b)
-	r.written += int64(n)
-	return n, err
-}
-
 func sanitizeMethod(m string) string {
 	return strings.ToLower(m)
 }

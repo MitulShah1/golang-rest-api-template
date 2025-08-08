@@ -4,33 +4,20 @@
 package config
 
 import (
-	"context"
-	"net/http"
 	"os"
-	"os/signal"
 	"strconv"
-	"syscall"
-	"time"
 
-	"github.com/MitulShah1/golang-rest-api-template/internal/handlers"
-	"github.com/MitulShah1/golang-rest-api-template/package/database"
-	"github.com/MitulShah1/golang-rest-api-template/package/logger"
-	"github.com/MitulShah1/golang-rest-api-template/package/middleware"
 	"github.com/joho/godotenv"
-	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 )
 
-// Service holds application configuration and manages the application lifecycle.
+// Service holds application configuration.
 // It includes database, server, and telemetry configuration.
 type Service struct {
 	Name         string
-	Logger       *logger.Logger
-	Server       *handlers.Server
 	dbEnv        DBConfig
+	redisEnv     RedisConfig
 	srvConfg     ServerConf
 	jaegerConfig JaegerConfig
-	db           *database.Database
-	tp           *tracesdk.TracerProvider
 }
 
 type DBConfig struct {
@@ -39,6 +26,13 @@ type DBConfig struct {
 	User     string
 	Password string
 	Name     string
+}
+
+type RedisConfig struct {
+	Host     string
+	Port     string
+	Password string
+	DB       int
 }
 
 type ServerConf struct {
@@ -57,98 +51,17 @@ func NewService() *Service {
 	}
 }
 
-// Init initializes the application configuration, including loading environment variables,
-// initializing the logger, database connection, and server. It returns an error if any
-// of the initialization steps fail.
-func (cnf *Service) Init() (err error) {
-	// initialize logger
-	cnf.Logger = logger.NewLogger(logger.DefaultOptions())
-
-	// Load environment variables
-	if err := cnf.LoadConfig(); err != nil {
-		return err
-	}
-
-	// initialize database
-	cnf.db, err = database.NewDatabase(&database.DBConfig{
-		Host:     cnf.dbEnv.Host,
-		Port:     cnf.dbEnv.Port,
-		User:     cnf.dbEnv.User,
-		Password: cnf.dbEnv.Password,
-		DBName:   cnf.dbEnv.Name,
-	})
-	if err != nil {
-		return err
-	}
-
-	cnf.Logger.Info("Database connection successful")
-
-	agentPort, _ := strconv.Atoi(cnf.jaegerConfig.AgentPort)
-	tmCnfg := middleware.TelemetryConfig{
-		Host:        cnf.jaegerConfig.AgentHost,
-		Port:        agentPort,
-		ServiceName: "go-rest-api-template",
-	}
-
-	// initialize tracer
-	cnf.tp, err = tmCnfg.InitTracer()
-	if err != nil {
-		return err
-	}
-
-	cnf.Logger.Info("Tracer initialized")
-
-	// initialize server
-	serverAddr := cnf.srvConfg.Address + ":" + cnf.srvConfg.Port
-	if cnf.Server, err = handlers.NewServer(serverAddr, cnf.Logger, cnf.db, &tmCnfg); err != nil {
-		return err
-	}
-
-	return nil
+// Init initializes the application configuration by loading environment variables.
+// It returns an error if the configuration loading fails.
+func (cnf *Service) Init() error {
+	return cnf.LoadConfig()
 }
 
-// Run starts the server and listens for termination signals.
-// It runs the server in a goroutine and waits for a termination signal (SIGINT or SIGTERM).
-// When a termination signal is received, it gracefully shuts down the server.
-func (cnf *Service) Run() error {
-	// Channel to listen for termination signals
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
-
-	// Run server in a goroutine
-	go func() {
-		cnf.Logger.Info("Starting server port: " + cnf.srvConfg.Port)
-		if err := cnf.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			cnf.Logger.Error("Server error", "error", err)
-			os.Exit(1)
-		}
-	}()
-
-	// Wait for termination signal
-	<-stop
-	cnf.Logger.Info("Shutting down server...")
-
-	// Graceful shutdown
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	// Shutdown the tracer provider
-	if err := cnf.tp.Shutdown(ctx); err != nil {
-		cnf.Logger.Error("Failed to shutdown tracer provider", "error", err)
-	}
-
-	if err := cnf.Server.ServerDown(ctx); err != nil {
-		cnf.Logger.Error("Server shutdown failed", "error", err)
-	} else {
-		cnf.Logger.Info("Server exited gracefully")
-	}
-	return nil
-}
-
+// LoadConfig loads configuration from environment variables
 func (cnf *Service) LoadConfig() error {
 	// loads environment variables from .env file
 	if err := godotenv.Load(); err != nil {
-		cnf.Logger.Warn("no .env file found, using system environment variables")
+		return err
 	}
 
 	cnf.dbEnv = DBConfig{
@@ -157,6 +70,15 @@ func (cnf *Service) LoadConfig() error {
 		User:     getEnv("DB_USER", "user"),
 		Password: getEnv("DB_PASSWORD", "password"),
 		Name:     getEnv("DB_NAME", "mydatabase"),
+	}
+
+	// Redis config
+	redisDB, _ := strconv.Atoi(getEnv("REDIS_DB", "0"))
+	cnf.redisEnv = RedisConfig{
+		Host:     getEnv("REDIS_HOST", "localhost"),
+		Port:     getEnv("REDIS_PORT", "6379"),
+		Password: getEnv("REDIS_PASSWORD", ""),
+		DB:       redisDB,
 	}
 
 	// Server config
@@ -180,4 +102,24 @@ func getEnv(key, defaultValue string) string {
 		return value
 	}
 	return defaultValue
+}
+
+// GetDBConfig returns the database configuration
+func (cnf *Service) GetDBConfig() DBConfig {
+	return cnf.dbEnv
+}
+
+// GetRedisConfig returns the Redis configuration
+func (cnf *Service) GetRedisConfig() RedisConfig {
+	return cnf.redisEnv
+}
+
+// GetServerConfig returns the server configuration
+func (cnf *Service) GetServerConfig() ServerConf {
+	return cnf.srvConfg
+}
+
+// GetJaegerConfig returns the Jaeger configuration
+func (cnf *Service) GetJaegerConfig() JaegerConfig {
+	return cnf.jaegerConfig
 }

@@ -40,6 +40,7 @@ The main ones are:
 - [prometheus/client_golang](https://github.com/prometheus/client_golang) for metrics
 - [otel](https://opentelemetry.io/) for observability
 - [jaeger](https://www.jaegertracing.io/) for distributed tracing
+- [Redis](github.com/redis/go-redis/v9) for cache
 
 ## 🎯 Quick Start (Using Template)
 

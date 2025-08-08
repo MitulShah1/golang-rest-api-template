@@ -1,14 +1,17 @@
 // Package product provides business logic for product operations.
-// It includes service layer functionality for product management.
+// It includes service layer functionality for product management with Redis caching.
 package product
 
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/MitulShah1/golang-rest-api-template/internal/handlers/product/model"
 	"github.com/MitulShah1/golang-rest-api-template/internal/repository"
 	sqlModel "github.com/MitulShah1/golang-rest-api-template/internal/repository/model"
+	"github.com/MitulShah1/golang-rest-api-template/package/cache"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 )
 
@@ -24,16 +27,28 @@ type ProductServiceInterface interface {
 type ProductService struct {
 	repo   repository.DBRepository
 	logger *logger.Logger
+	cache  *cache.Cache
 }
 
-func NewProductService(repo repository.DBRepository, logger *logger.Logger) ProductServiceInterface {
+func NewProductService(repo repository.DBRepository, logger *logger.Logger, cache *cache.Cache) ProductServiceInterface {
 	return &ProductService{
 		repo:   repo,
 		logger: logger,
+		cache:  cache,
 	}
 }
 
 func (s *ProductService) GetProductDetail(ctx context.Context, id int) (product *model.ProductDetailResponse, err error) {
+	// Try to get from cache first
+	cacheKey := fmt.Sprintf("product:%d", id)
+	var cachedProduct model.ProductDetailResponse
+
+	if err := s.cache.Get(ctx, cacheKey, &cachedProduct); err == nil {
+		s.logger.Debug("product retrieved from cache", "product_id", id)
+		return &cachedProduct, nil
+	}
+
+	// Cache miss, get from database
 	prodDetail, err := s.repo.GetProductDetail(ctx, id)
 	if err != nil {
 		s.logger.Error("error while fetch product information", err)
@@ -55,6 +70,11 @@ func (s *ProductService) GetProductDetail(ctx context.Context, id int) (product 
 		CategoryID:  prodDetail.CategoryID,
 	}
 
+	// Cache the result for future requests
+	if err := s.cache.Set(ctx, cacheKey, product, 30*time.Minute); err != nil {
+		s.logger.Warn("failed to cache product", "product_id", id, "error", err)
+	}
+
 	return product, nil
 }
 
@@ -72,6 +92,10 @@ func (s *ProductService) CreateProduct(ctx context.Context, product model.Create
 		s.logger.Error("error while create product", err)
 		return err
 	}
+
+	// Invalidate product cache patterns
+	s.invalidateProductCache(ctx)
+
 	return nil
 }
 
@@ -89,6 +113,13 @@ func (s *ProductService) UpdateProduct(ctx context.Context, pid int, product mod
 		s.logger.Error("error while update product", err)
 		return err
 	}
+
+	// Invalidate specific product cache and patterns
+	s.invalidateProductCache(ctx)
+	if err := s.cache.Delete(ctx, fmt.Sprintf("product:%d", pid)); err != nil {
+		s.logger.Warn("failed to delete product cache", "product_id", pid, "error", err)
+	}
+
 	return nil
 }
 
@@ -98,5 +129,20 @@ func (s *ProductService) DeleteProduct(ctx context.Context, id int) (err error) 
 		s.logger.Error("error while delete product", err)
 		return err
 	}
+
+	// Invalidate product cache patterns
+	s.invalidateProductCache(ctx)
+	if err := s.cache.Delete(ctx, fmt.Sprintf("product:%d", id)); err != nil {
+		s.logger.Warn("failed to delete product cache", "product_id", id, "error", err)
+	}
+
 	return nil
+}
+
+// invalidateProductCache removes all product-related cache entries
+func (s *ProductService) invalidateProductCache(ctx context.Context) {
+	// Delete all product cache patterns
+	if err := s.cache.DeletePattern(ctx, "product:*"); err != nil {
+		s.logger.Warn("failed to invalidate product cache", "error", err)
+	}
 }

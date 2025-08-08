@@ -14,6 +14,7 @@ import (
 	"github.com/MitulShah1/golang-rest-api-template/internal/repository"
 	"github.com/MitulShah1/golang-rest-api-template/internal/services/category"
 	"github.com/MitulShah1/golang-rest-api-template/internal/services/product"
+	"github.com/MitulShah1/golang-rest-api-template/package/cache"
 	"github.com/MitulShah1/golang-rest-api-template/package/database"
 	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 	"github.com/MitulShah1/golang-rest-api-template/package/middleware"
@@ -28,7 +29,7 @@ type Server struct {
 	logger   *logger.Logger
 }
 
-func NewServer(address string, logger *logger.Logger, db *database.Database, tm *middleware.TelemetryConfig) (*Server, error) {
+func NewServer(address string, logger *logger.Logger, db *database.Database, cache *cache.Cache, tm *middleware.TelemetryConfig) (*Server, error) {
 	// Create a new router
 	router := mux.NewRouter()
 
@@ -57,6 +58,10 @@ func NewServer(address string, logger *logger.Logger, db *database.Database, tm 
 	healthAPI := health.NewHealthAPI(logger)
 	healthAPI.RegisterHandlers(r)
 
+	// cache health check API
+	cacheHealthAPI := health.NewCacheHealthAPI(logger, cache)
+	cacheHealthAPI.RegisterHandlers(r)
+
 	// Create versioned subrouter (e.g., /v1)
 	apiV1 := r.PathPrefix("/v1").Subrouter()
 
@@ -73,8 +78,8 @@ func NewServer(address string, logger *logger.Logger, db *database.Database, tm 
 	// initialize repository
 	repo := repository.NewDBRepository(db)
 
-	// initialize product service
-	productService := product.NewProductService(repo, logger)
+	// initialize product service with cache
+	productService := product.NewProductService(repo, logger, cache)
 
 	// initialize product handler
 	productHandler := prodApi.NewProductAPI(logger, productService)
@@ -82,8 +87,8 @@ func NewServer(address string, logger *logger.Logger, db *database.Database, tm 
 	// Register product handlers
 	productHandler.RegisterHandlers(apiV1)
 
-	// initialize category service
-	categoryService := category.NewCategoryService(repo, logger)
+	// initialize category service with cache
+	categoryService := category.NewCategoryService(repo, logger, cache)
 
 	// initialize category handler
 	categoryHandler := catApi.NewCategoryAPI(logger, categoryService)

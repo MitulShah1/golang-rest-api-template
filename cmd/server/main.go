@@ -1,9 +1,8 @@
 package main
 
 import (
-	"github.com/MitulShah1/golang-rest-api-template/config"
+	"github.com/MitulShah1/golang-rest-api-template/internal/application"
 	_ "github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
-	"github.com/MitulShah1/golang-rest-api-template/package/logger"
 )
 
 // @title           REST API Template Example
@@ -28,17 +27,16 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-	// Initialize the logger
-	log := logger.NewLogger(logger.DefaultOptions())
+	// Create and initialize the application
+	app := application.NewApplication()
 
-	// Initialize the configuration
-	config := config.NewService()
-	if err := config.Init(); err != nil {
-		log.Fatal("error while initize app", "error", err.Error())
+	// Initialize all application components
+	if err := app.Initialize(); err != nil {
+		app.GetLogger().Fatal("failed to initialize application", "error", err.Error())
 	}
 
-	// Run the application
-	if err := config.Run(); err != nil {
-		log.Fatal("error while run app", "error", err.Error())
+	// Run the application (this will handle graceful shutdown)
+	if err := app.Run(); err != nil {
+		app.GetLogger().Fatal("application failed", "error", err.Error())
 	}
 }

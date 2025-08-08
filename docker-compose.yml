@@ -52,15 +52,41 @@ services:
         VULN_VERSION: ${VULN_VERSION}
         JAEGER_AGENT_HOST: ${JAEGER_AGENT_HOST}
         JAEGER_AGENT_PORT: ${JAEGER_AGENT_PORT}
+        REDIS_HOST: ${REDIS_HOST}
+        REDIS_PORT: ${REDIS_PORT}
+        REDIS_PASSWORD: ${REDIS_PASSWORD}
+        REDIS_DB: ${REDIS_DB}
     container_name: go_app
     restart: always
     depends_on:
        db:
         condition: service_healthy  # ✅ Waits for MySQL to be ready
+       redis:
+        condition: service_healthy  # ✅ Waits for Redis to be ready
     ports:
       - ${SERVER_PORT}:8080
     env_file:
       - .env  # ✅ Load environment variables from .env
+    networks:
+      - app_network
+
+  # ───────────────────────────────────────────────────────────
+  # 🌟 REDIS CACHE
+  # ───────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: redis_cache
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      retries: 5
+      timeout: 3s
     networks:
       - app_network
 
@@ -91,3 +117,4 @@ networks:
 
 volumes:
   db_data:
+  redis_data:

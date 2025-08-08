@@ -11,7 +11,12 @@ import (
 )
 
 // HealthCheckPath is the path for health check endpoint
-const HealthCheckPath = "/health-check"
+const (
+	HealthCheckPath = "/health-check"
+	CacheHealthPath = "/cache/health"
+	CacheStatsPath  = "/cache/stats"
+	FlushCachePath  = "/cache/flush"
+)
 
 type HealthAPI struct {
 	logger *logger.Logger

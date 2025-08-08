@@ -46,6 +46,11 @@ env: ## 📝 CHECK & COPY .env IF MISSING
 		echo -e "$(RED)⚠️  .env file not found! Creating from .env.example...$(NC)"; \
 		cp .env.example .env; \
 		echo -e "$(GREEN)✅ .env file created successfully!$(NC)"; \
+		echo -e "$(YELLOW)📝 Please update Redis configuration in .env file:$(NC)"; \
+		echo -e "$(BLUE)   REDIS_HOST=localhost$(NC)"; \
+		echo -e "$(BLUE)   REDIS_PORT=6379$(NC)"; \
+		echo -e "$(BLUE)   REDIS_PASSWORD=your_redis_password$(NC)"; \
+		echo -e "$(BLUE)   REDIS_DB=0$(NC)"; \
 	else \
 		echo -e "$(GREEN)✅ .env file exists!$(NC)"; \
 	fi

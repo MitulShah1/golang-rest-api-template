@@ -68,6 +68,12 @@ func (c *TelemetryConfig) OpenTelemetryMiddleware(next http.Handler) http.Handle
 			status:         http.StatusOK, // Initialize with default status
 		}
 
+		// If tracer is not initialized, just pass through without tracing
+		if c.Trace == nil {
+			next.ServeHTTP(delegate, r)
+			return
+		}
+
 		if c.Propagators == nil {
 			c.Propagators = otel.GetTextMapPropagator()
 		}
