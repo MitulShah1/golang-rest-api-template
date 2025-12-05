@@ -1,6 +1,6 @@
 module github.com/MitulShah1/golang-rest-api-template
 
-go 1.23.0
+go 1.24.7
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
