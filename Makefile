@@ -1,5 +1,5 @@
-# Load environment variables
-include .env
+# Load environment variables (optional, won't fail if .env doesn't exist)
+-include .env
 
 # Get repository name from current directory
 REPO_NAME ?= $(shell basename "$$(pwd)")
