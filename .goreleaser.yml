@@ -124,7 +124,7 @@ dockers:
     image_templates:
       - "ghcr.io/mitulshah1/{{ .ProjectName }}:{{ .Version }}-amd64"
       - "ghcr.io/mitulshah1/{{ .ProjectName }}:latest-amd64"
-    dockerfile: Dockerfile
+    dockerfile: Dockerfile.goreleaser
     use: buildx
     build_flag_templates:
       - "--platform=linux/amd64"
@@ -139,7 +139,7 @@ dockers:
     image_templates:
       - "ghcr.io/mitulshah1/{{ .ProjectName }}:{{ .Version }}-arm64"
       - "ghcr.io/mitulshah1/{{ .ProjectName }}:latest-arm64"
-    dockerfile: Dockerfile
+    dockerfile: Dockerfile.goreleaser
     use: buildx
     build_flag_templates:
       - "--platform=linux/arm64"
