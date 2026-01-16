@@ -1,0 +1,199 @@
+# GoReleaser configuration file
+# Documentation: https://goreleaser.com
+
+# Project metadata
+project_name: golang-rest-api-template
+
+# Before hook allows you to run commands before the build
+before:
+  hooks:
+    # Ensure all dependencies are properly installed
+    - go mod tidy
+    # Generate API documentation
+    - make install_swag
+    - make generate_docs
+
+# Build configuration
+builds:
+  - id: server
+    # Main entry point
+    main: ./cmd/server/main.go
+    # Binary name
+    binary: server
+    # Environment variables for the build
+    env:
+      - CGO_ENABLED=0
+    # Flags to pass to the go build command
+    flags:
+      - -trimpath
+    # LDFLAGS to inject version information
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+    # Target platforms and architectures
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - "6"
+      - "7"
+    # Ignore specific OS/Arch combinations
+    ignore:
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+
+# Archive configuration
+archives:
+  - id: default
+    # Archive name template
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # Files to include in the archive
+    files:
+      - README.md
+      - LICENSE
+      - CONTRIBUTING.md
+      - .env.example
+      - docs/**/*
+    # Archive format (tar.gz for Unix, zip for Windows)
+    format_overrides:
+      - goos: windows
+        format: zip
+
+# Checksum configuration
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+
+# Snapshot configuration (for non-tagged builds)
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+# Changelog configuration
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - '^ci:'
+      - 'README'
+      - Merge pull request
+      - Merge branch
+  groups:
+    - title: 'New Features'
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug Fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: 'Performance Improvements'
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: 'Refactors'
+      regexp: '^.*?refactor(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: 'Documentation'
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 4
+    - title: 'Other Changes'
+      order: 999
+
+# Docker images configuration
+dockers:
+  - id: amd64
+    goos: linux
+    goarch: amd64
+    image_templates:
+      - "ghcr.io/mitulshah1/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "ghcr.io/mitulshah1/{{ .ProjectName }}:latest-amd64"
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+  
+  - id: arm64
+    goos: linux
+    goarch: arm64
+    image_templates:
+      - "ghcr.io/mitulshah1/{{ .ProjectName }}:{{ .Version }}-arm64"
+      - "ghcr.io/mitulshah1/{{ .ProjectName }}:latest-arm64"
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
+# Docker manifests for multi-arch images
+docker_manifests:
+  - name_template: "ghcr.io/mitulshah1/{{ .ProjectName }}:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/mitulshah1/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "ghcr.io/mitulshah1/{{ .ProjectName }}:{{ .Version }}-arm64"
+  
+  - name_template: "ghcr.io/mitulshah1/{{ .ProjectName }}:latest"
+    image_templates:
+      - "ghcr.io/mitulshah1/{{ .ProjectName }}:latest-amd64"
+      - "ghcr.io/mitulshah1/{{ .ProjectName }}:latest-arm64"
+
+# Release configuration
+release:
+  github:
+    owner: MitulShah1
+    name: golang-rest-api-template
+  # Create release notes
+  draft: false
+  # Mark as prerelease
+  prerelease: auto
+  # Release name template
+  name_template: "{{.ProjectName}} v{{.Version}}"
+  # Header and footer for the release notes
+  header: |
+    ## Release v{{ .Version }}
+    
+    Welcome to this new release of {{ .ProjectName }}!
+  footer: |
+    ## Docker Images
+    
+    Multi-arch Docker images are available:
+    ```bash
+    docker pull ghcr.io/mitulshah1/{{ .ProjectName }}:{{ .Version }}
+    ```
+    
+    ## Installation
+    
+    Download the appropriate archive for your platform from the assets below.
+    
+    ## Full Changelog
+    
+    See the full changelog at https://github.com/MitulShah1/golang-rest-api-template/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+# Announce configuration (optional - for future use)
+# announce:
+#   slack:
+#     enabled: true
+#     message_template: 'New release {{ .ProjectName }} {{ .Tag }} is out! Check it out at {{ .ReleaseURL }}'

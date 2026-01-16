@@ -1,8 +1,20 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/MitulShah1/golang-rest-api-template/internal/application"
 	_ "github.com/MitulShah1/golang-rest-api-template/internal/handlers/category/model"
+)
+
+var (
+	// version is set during build by GoReleaser
+	version = "dev"
+	// commit is set during build by GoReleaser
+	commit = "none"
+	// date is set during build by GoReleaser
+	date = "unknown"
 )
 
 // @title           REST API Template Example
@@ -27,8 +39,23 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
+	// Check for version flag
+	if len(os.Args) > 1 && (os.Args[1] == "--version" || os.Args[1] == "-v") {
+		fmt.Printf("golang-rest-api-template %s\n", version)
+		fmt.Printf("  commit: %s\n", commit)
+		fmt.Printf("  built:  %s\n", date)
+		os.Exit(0)
+	}
+
 	// Create and initialize the application
 	app := application.NewApplication()
+
+	// Log version information
+	app.GetLogger().Info("starting application",
+		"version", version,
+		"commit", commit,
+		"built", date,
+	)
 
 	// Initialize all application components
 	if err := app.Initialize(); err != nil {

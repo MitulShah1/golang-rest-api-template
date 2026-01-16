@@ -30,3 +30,6 @@ build/*
 
 #ignore test coverage
 .coverage
+
+#ignore goreleaser dist
+dist/

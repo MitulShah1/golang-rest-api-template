@@ -2,6 +2,7 @@
 
 [![license](https://img.shields.io/badge/license-MIT-green)](https://raw.githubusercontent.com/MitulShah1/golang-rest-api-template/main/LICENSE)
 [![build](https://github.com/MitulShah1/golang-rest-api-template//actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/MitulShah1/golang-rest-api-template/actions/workflows/go.yml)
+[![release](https://github.com/MitulShah1/golang-rest-api-template/actions/workflows/release.yml/badge.svg)](https://github.com/MitulShah1/golang-rest-api-template/actions/workflows/release.yml)
 [![codecov](https://codecov.io/github/MitulShah1/golang-rest-api-template/graph/badge.svg?token=88JSRODXSS)](https://codecov.io/github/MitulShah1/golang-rest-api-template)
 [![Go Report Card](https://goreportcard.com/badge/github.com/MitulShah1/golang-rest-api-template)](https://goreportcard.com/report/github.com/MitulShah1/golang-rest-api-template)
 [![pkg.go.dev](https://pkg.go.dev/badge/github.com/MitulShah1/golang-rest-api-template)](https://pkg.go.dev/github.com/MitulShah1/golang-rest-api-template)
@@ -22,6 +23,7 @@ This template includes everything you need to build a REST API with Go - logging
 - API docs with Swagger
 - Docker setup
 - GitHub Actions CI/CD
+- Automated releases with GoReleaser
 - Database migrations
 - Tests
 - Makefile for common tasks
@@ -209,6 +211,68 @@ Prometheus metrics are exposed at `http://localhost:8080/metrics`.
 - Integration tests are in the `test/` directory
 - Run all tests with `make test`
 
+## Releases
+
+This project uses [GoReleaser](https://goreleaser.com/) for automated releases. Releases are triggered automatically when you push a version tag.
+
+### Creating a Release
+
+1. Create and push a version tag:
+
+```bash
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+```
+
+2. The GitHub Actions workflow will automatically:
+   - Build binaries for multiple platforms (Linux, macOS, Windows)
+   - Generate checksums
+   - Create Docker images for AMD64 and ARM64
+   - Publish to GitHub Container Registry
+   - Create a GitHub release with changelog
+   - Update pkg.go.dev documentation
+
+### Using Released Binaries
+
+Download the latest release from the [releases page](https://github.com/MitulShah1/golang-rest-api-template/releases):
+
+```bash
+# Linux AMD64
+wget https://github.com/MitulShah1/golang-rest-api-template/releases/download/v1.0.0/golang-rest-api-template_1.0.0_Linux_x86_64.tar.gz
+tar -xzf golang-rest-api-template_1.0.0_Linux_x86_64.tar.gz
+
+# macOS ARM64
+wget https://github.com/MitulShah1/golang-rest-api-template/releases/download/v1.0.0/golang-rest-api-template_1.0.0_Darwin_arm64.tar.gz
+tar -xzf golang-rest-api-template_1.0.0_Darwin_arm64.tar.gz
+```
+
+### Using Docker Images
+
+Pull and run the Docker image:
+
+```bash
+# Pull the latest version
+docker pull ghcr.io/mitulshah1/golang-rest-api-template:latest
+
+# Or pull a specific version
+docker pull ghcr.io/mitulshah1/golang-rest-api-template:v1.0.0
+
+# Run the container
+docker run -p 8080:8080 ghcr.io/mitulshah1/golang-rest-api-template:latest
+```
+
+### Local Release Testing
+
+Test the release process locally:
+
+```bash
+# Install GoReleaser
+go install github.com/goreleaser/goreleaser@latest
+
+# Test release (without publishing)
+goreleaser release --snapshot --clean
+```
+
 ## Deployment
 
 The project includes:
@@ -216,6 +280,7 @@ The project includes:
 - Dockerfile for containerization
 - docker-compose.yml for local development
 - GitHub Actions for CI/CD pipeline
+- GoReleaser for automated releases
 
 ## Contributing
 
