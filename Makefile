@@ -14,8 +14,8 @@ COVERAGE_DIR ?= .coverage
 # Golang-migrate version
 MIGRATE_VERSION ?= v4.16.2  # Change to the latest version if needed
 
-# Golang-lint version
-LINT_VERSION ?= v1.59.1  # Change to the latest version if needed
+# Golang-lint version (v1.64+ for Go 1.24+)
+LINT_VERSION ?= v1.64.2
 
 # Swag version
 SWAG_VERSION ?= v1.16.4  # Change to the latest version if needed
@@ -23,11 +23,11 @@ SWAG_VERSION ?= v1.16.4  # Change to the latest version if needed
 # Installation directory for binaries
 INSTALL_DIR ?= $(HOME)/.local/bin
 
-# Go Imports Vesrsion
-IMPORTS_VERSION ?= v0.24.0
+# Go Imports Version (v0.34.0+ required for Go 1.24+)
+IMPORTS_VERSION ?= v0.34.0
 
 # Go Vulncheck Version
-VULN_VERSION ?= v1.1.3
+VULN_VERSION ?= v1.1.4
 
 # Formatting for beautiful terminal output
 BLUE=\033[1;34m

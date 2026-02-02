@@ -1,9 +1,6 @@
 version: '3.8'
 
 services:
-  # ───────────────────────────────────────────────────────────
-  # 🌟 DATABASE SERVICE (MySQL)
-  # ───────────────────────────────────────────────────────────
   db:
     image: mysql:8.0
     container_name: mysql_container
@@ -27,76 +24,53 @@ services:
     networks:
       - app_network
 
-  # ───────────────────────────────────────────────────────────
-  # 🌟 GOLANG APPLICATION
-  # ───────────────────────────────────────────────────────────
   app:
     build:
       context: .
       args:
-        SERVER_PORT: ${SERVER_PORT}
-        DB_HOST: ${DB_HOST}
-        DB_PORT: ${DB_PORT}
-        DB_USER: ${DB_USER}
-        DB_PASSWORD: ${DB_PASSWORD}
-        DB_NAME: ${DB_NAME}
-        DEBUG: ${DEBUG}
-        DISABLE_LOGS: ${DISABLE_LOGS}
-        LOG_FORMAT: ${LOG_FORMAT}
-        LOG_CALLER: ${LOG_CALLER}
-        LOG_STACKTRACE: ${LOG_STACKTRACE}
         SWAG_VERSION: ${SWAG_VERSION}
         MIGRATE_VERSION: ${MIGRATE_VERSION}
-        LINT_VERSION: ${LINT_VERSION}
-        IMPORTS_VERSION: ${IMPORTS_VERSION}
-        VULN_VERSION: ${VULN_VERSION}
-        JAEGER_AGENT_HOST: ${JAEGER_AGENT_HOST}
-        JAEGER_AGENT_PORT: ${JAEGER_AGENT_PORT}
-        REDIS_HOST: ${REDIS_HOST}
-        REDIS_PORT: ${REDIS_PORT}
-        REDIS_PASSWORD: ${REDIS_PASSWORD}
-        REDIS_DB: ${REDIS_DB}
     container_name: go_app
     restart: always
     depends_on:
-       db:
-        condition: service_healthy  # ✅ Waits for MySQL to be ready
-       redis:
-        condition: service_healthy  # ✅ Waits for Redis to be ready
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - ${SERVER_PORT}:8080
     env_file:
-      - .env  # ✅ Load environment variables from .env
+      - .env
+    environment:
+      DB_HOST: db
+      REDIS_HOST: redis
+      JAEGER_AGENT_HOST: jaeger
     networks:
       - app_network
 
-  # ───────────────────────────────────────────────────────────
-  # 🌟 REDIS CACHE
-  # ───────────────────────────────────────────────────────────
   redis:
     image: redis:7-alpine
     container_name: redis_cache
     restart: always
+    env_file:
+      - .env
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     ports:
       - ${REDIS_PORT}:6379
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: ["CMD", "sh", "-c", "redis-cli -a \"$$REDIS_PASSWORD\" ping"]
       interval: 10s
       retries: 5
       timeout: 3s
     networks:
       - app_network
 
-  # ───────────────────────────────────────────────────────────
-  # 🌟 JAEGER
-  # ───────────────────────────────────────────────────────────
   jaeger:
     image: jaegertracing/all-in-one:1.6
     environment:
-     - LOG_LEVEL=debug
+      - LOG_LEVEL=debug
     ports:
       - 5775:5775/udp
       - 6831:6831/udp
@@ -109,9 +83,6 @@ services:
       - app_network
 
 
-# ───────────────────────────────────────────────────────────
-# 🌟 NETWORK & VOLUME CONFIGURATION
-# ───────────────────────────────────────────────────────────
 networks:
   app_network:
 

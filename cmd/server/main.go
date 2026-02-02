@@ -50,17 +50,17 @@ func main() {
 	// Create and initialize the application
 	app := application.NewApplication()
 
+	// Initialize all application components (logger is created here)
+	if err := app.Initialize(); err != nil {
+		app.GetLogger().Fatal("failed to initialize application", "error", err.Error())
+	}
+
 	// Log version information
 	app.GetLogger().Info("starting application",
 		"version", version,
 		"commit", commit,
 		"built", date,
 	)
-
-	// Initialize all application components
-	if err := app.Initialize(); err != nil {
-		app.GetLogger().Fatal("failed to initialize application", "error", err.Error())
-	}
 
 	// Run the application (this will handle graceful shutdown)
 	if err := app.Run(); err != nil {
