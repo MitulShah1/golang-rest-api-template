@@ -1,7 +1,7 @@
 # ───────────────────────────────────────────────────────────
 # 🌟 STAGE 1: BUILD GO APPLICATION
 # ───────────────────────────────────────────────────────────
-FROM golang:1.25 AS builder
+FROM golang:1.26 AS builder
 
 # Build args (no secrets - app gets config at runtime via env_file)
 ARG SWAG_VERSION
