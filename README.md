@@ -201,6 +201,43 @@ Configuration is managed through `.env`. Environment variables can override thes
 
 API documentation is generated using Swagger. The documentation is available at `http://localhost:8080/swagger/index.html`.
 
+## 📊 Monitoring & Observability
+
+The template includes a comprehensive monitoring stack with Grafana and Prometheus:
+
+### Monitoring Stack
+
+- **Prometheus**: Time-series database for metrics collection
+- **Grafana**: Visualization and dashboard platform
+- **Jaeger**: Distributed tracing
+- **Application Metrics**: Built-in Prometheus metrics middleware
+
+### Quick Start for Monitoring
+
+1. Start the monitoring stack:
+
+```bash
+make docker_up
+```
+
+2. Access the monitoring tools:
+
+- **Grafana**: http://localhost:3000 (admin/admin)
+- **Prometheus**: http://localhost:9090
+- **Jaeger**: http://localhost:16686
+- **Application Metrics**: http://localhost:8080/metrics
+
+### Pre-configured Dashboards
+
+The template includes a pre-configured Grafana dashboard with:
+
+- Request rate and response time metrics
+- Error rates by status code
+- HTTP method distribution
+- 95th percentile response times
+
+For detailed monitoring setup instructions, see [monitoring/README.md](monitoring/README.md).
+
 ## Prometheus Metrics
 
 Prometheus metrics are exposed at `http://localhost:8080/metrics`.
