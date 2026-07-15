@@ -28,5 +28,11 @@ go.work.sum
 build/*
 /bkp
 
+#ignore extra
+extra/
+
 #ignore test coverage
 .coverage
+
+#ignore goreleaser dist
+dist/

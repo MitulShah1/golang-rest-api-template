@@ -1,0 +1,22 @@
+# Dockerfile for GoReleaser
+# This uses the pre-built binary from GoReleaser instead of building from source
+
+FROM debian:bullseye-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the pre-built binary from GoReleaser
+COPY server /app/server
+
+# Expose the application port (default)
+EXPOSE 8080
+
+# Run the application
+ENTRYPOINT ["/app/server"]

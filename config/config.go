@@ -59,10 +59,8 @@ func (cnf *Service) Init() error {
 
 // LoadConfig loads configuration from environment variables
 func (cnf *Service) LoadConfig() error {
-	// loads environment variables from .env file
-	if err := godotenv.Load(); err != nil {
-		return err
-	}
+	// Load .env file if present (optional - env vars may be set by Docker, etc.)
+	_ = godotenv.Load()
 
 	cnf.dbEnv = DBConfig{
 		Port:     getEnv("DB_PORT", "3306"),
